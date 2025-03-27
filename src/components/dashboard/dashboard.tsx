@@ -9,6 +9,8 @@ import { LeadsList } from '@/components/leads/leads-list'
 import { Badge } from '@/components/ui/badge'
 import { useGetTodaysLeadsQuery } from '@/lib/features/leads/leadsApi'
 import { TasksList } from '@/components/tasks/tasks-list'
+import { CallDetails } from './call-details'
+import { UserPerformance } from './team-performance'
 
 export function Dashboard() {
   const navigate = useNavigate()
@@ -17,6 +19,7 @@ export function Dashboard() {
     limit: 10,
     pageNumber: 1,
     startDate: new Date().toISOString().split('T')[0],
+    endDate: new Date().toISOString().split('T')[0],
   })
 
   useEffect(() => {
@@ -66,48 +69,43 @@ export function Dashboard() {
         </div>
 
         <div className="container p-0 space-y-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column */}
-            <div className="space-y-8">
-              {/* Today's Meetings */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-medium">Today's Meetings</h2>
-                  <Link 
-                    to="/meetings" 
-                    className="text-sm text-gray-400 hover:text-white transition-colors"
-                  >
-                    View all
-                  </Link>
-                </div>
-                <div className="bg-[#242744]/30 backdrop-blur-lg rounded-3xl border border-[#2F304D]/20 p-6">
-                  <MeetingsList />
-                </div>
-              </div>
+          {/* User Performance Section */}
+          <div className="bg-[#242744]/30 backdrop-blur-lg rounded-3xl border border-[#2F304D]/20 overflow-hidden">
+            <UserPerformance />
+          </div>
 
-              {/* Today's Leads */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-medium">Today's Leads</h2>
-                    <Badge variant="secondary" className="bg-[#2F304D] text-white">
-                      {leadsData?.data.leads?.length || 0}
-                    </Badge>
-                  </div>
-                  <Link 
-                    to="/leads" 
-                    className="text-sm text-gray-400 hover:text-white transition-colors"
-                  >
-                    View all
-                  </Link>
-                </div>
-                <div className="bg-[#242744]/30 backdrop-blur-lg rounded-3xl border border-[#2F304D]/20 p-6">
-                  <LeadsList />
-                </div>
+          {/* Meetings and Call Statistics Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Today's Meetings */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-medium">Today's Meetings</h2>
+                <Link 
+                  to="/meetings" 
+                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                >
+                  View all
+                </Link>
+              </div>
+              <div className="bg-[#242744]/30 backdrop-blur-lg rounded-3xl border border-[#2F304D]/20 overflow-hidden">
+                <MeetingsList />
               </div>
             </div>
 
-            {/* Right Column */}
+            {/* Call Statistics */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-medium">Call Statistics</h2>
+              </div>
+              <div className="bg-[#242744]/30 backdrop-blur-lg rounded-3xl border border-[#2F304D]/20 overflow-hidden">
+                <CallDetails />
+              </div>
+            </div>
+          </div>
+
+          {/* Tasks and Leads Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Today's Tasks */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-medium">Today's Tasks</h2>
@@ -118,13 +116,32 @@ export function Dashboard() {
                   View all
                 </Link>
               </div>
-              <div className="bg-[#242744]/30 backdrop-blur-lg rounded-3xl border border-[#2F304D]/20 p-6">
+              <div className="bg-[#242744]/30 backdrop-blur-lg rounded-3xl border border-[#2F304D]/20 overflow-hidden">
                 <TasksList />
               </div>
             </div>
-          </div>
 
-           
+            {/* Today's Leads */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <h2 className="text-lg font-medium">Today's Leads</h2>
+                  <Badge variant="secondary" className="bg-[#2F304D] text-white">
+                    {leadsData?.data.leads?.length || 0}
+                  </Badge>
+                </div>
+                <Link 
+                  to="/leads" 
+                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                >
+                  View all
+                </Link>
+              </div>
+              <div className="bg-[#242744]/30 backdrop-blur-lg rounded-3xl border border-[#2F304D]/20 overflow-hidden">
+                <LeadsList />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

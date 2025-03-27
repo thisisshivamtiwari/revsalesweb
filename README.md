@@ -8,7 +8,18 @@ A modern, responsive dashboard for RevSales built with React, TypeScript, and Ta
 - 📱 Fully responsive design
 - 🔐 Authentication system
 - 📊 Lead management
-- 📅 Meeting scheduling
+- 📅 Calendar & Meeting Management
+  - Day/Week/Month views
+  - Meeting scheduling and rescheduling
+  - Drag and drop functionality
+  - Search and filter meetings
+  - Real-time updates
+- 👥 Team Management
+  - Team member listings
+  - Performance tracking
+  - Lead and revenue statistics
+  - Member search functionality
+  - Quick member addition
 - ✅ Task management
 - 🎯 Real-time updates
 - 🔍 Advanced search and filtering
@@ -22,6 +33,8 @@ A modern, responsive dashboard for RevSales built with React, TypeScript, and Ta
 - RTK Query
 - Shadcn UI
 - Vite
+- Lucide Icons
+- React Hot Toast
 
 ## Getting Started
 
@@ -49,14 +62,41 @@ npm run dev
 
 ```
 src/
-├── components/        # React components
-├── lib/              # Utilities and helpers
-│   ├── features/     # Redux slices and API
-│   ├── types/        # TypeScript types
-│   └── utils/        # Utility functions
-├── assets/           # Static assets
-└── App.tsx           # Root component
+├── components/           # React components
+│   ├── auth/            # Authentication components
+│   ├── calendar/        # Calendar and meeting components
+│   ├── dashboard/       # Dashboard components
+│   ├── teams/          # Team management components
+│   └── ui/             # Reusable UI components
+├── lib/                 # Utilities and helpers
+│   ├── features/        # Redux slices and API
+│   │   ├── auth/       # Authentication slice
+│   │   ├── calendar/   # Calendar and meetings API
+│   │   └── teams/      # Teams management API
+│   ├── types/          # TypeScript types
+│   └── utils/          # Utility functions
+├── assets/             # Static assets
+└── App.tsx             # Root component
 ```
+
+## Features in Detail
+
+### Calendar Management
+- Interactive calendar with multiple view options (day, week, month)
+- Drag and drop meeting rescheduling
+- Meeting creation and editing
+- Advanced search and filtering options
+- Real-time updates for meeting changes
+
+### Team Management
+- Comprehensive team member listing
+- Performance metrics tracking
+  - Total leads generated
+  - Revenue closed
+  - Individual member statistics
+- Quick search functionality for team members
+- Easy member addition interface
+- Real-time performance updates
 
 ## Contributing
 

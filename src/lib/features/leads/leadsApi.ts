@@ -7,6 +7,7 @@ interface GetLeadsParams {
   pageNumber?: number;
   search?: string;
   startDate: string;
+  endDate: string;
 }
 
 export const leadsApi = createApi({

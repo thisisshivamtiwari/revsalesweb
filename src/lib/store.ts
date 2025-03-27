@@ -3,6 +3,8 @@ import { authApi } from './features/auth/authApi';
 import { meetingsApi } from './features/meetings/meetingsApi';
 import { leadsApi } from './features/leads/leadsApi';
 import { tasksApi } from './features/tasks/tasksApi';
+import { dashboardApi } from './features/dashboard/dashboardApi';
+import { teamsApi } from './features/teams/teamsApi';
 
 export const store = configureStore({
   reducer: {
@@ -10,13 +12,17 @@ export const store = configureStore({
     [meetingsApi.reducerPath]: meetingsApi.reducer,
     [leadsApi.reducerPath]: leadsApi.reducer,
     [tasksApi.reducerPath]: tasksApi.reducer,
+    [dashboardApi.reducerPath]: dashboardApi.reducer,
+    [teamsApi.reducerPath]: teamsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       authApi.middleware,
       meetingsApi.middleware,
       leadsApi.middleware,
-      tasksApi.middleware
+      tasksApi.middleware,
+      dashboardApi.middleware,
+      teamsApi.middleware
     ),
 });
 

@@ -28,7 +28,7 @@ const navigationItems = [
   {
     title: 'Team',
     icon: Users,
-    path: '/team',
+    path: '/teams',
   },
   {
     title: 'Profile',

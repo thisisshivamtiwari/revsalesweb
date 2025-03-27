@@ -19,5 +19,6 @@ export interface LeadsResponse {
   code: number;
   data: {
     leads: Lead[];
+    total: number;
   };
 } 

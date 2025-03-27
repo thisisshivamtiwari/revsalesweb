@@ -1,41 +1,71 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { MeetingsResponse } from "@/lib/types/meetings"
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQuery } from '@/lib/utils/baseQuery';
+
+interface Attendee {
+  name: string;
+  email: string;
+  status: string;
+  _id: string;
+}
+
+interface Meeting {
+  _id: string;
+  meetingId: string;
+  leadId: number;
+  taskId: string;
+  companyId: number;
+  title: string;
+  description: string;
+  startTime: string;
+  endTime: string;
+  organizer: {
+    name: string;
+    email: string;
+  };
+  attendees: Attendee[];
+  location: string;
+  meetingStatus: string;
+  isRecurring: boolean;
+  recurrenceDetails: any;
+  MOM: string;
+  link: string;
+  createdBy: string;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface GetMeetingsResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: {
+    total: number;
+    limit: number;
+    pageNumber: number;
+    meetings: Meeting[];
+  };
+}
 
 interface GetMeetingsParams {
-  limit?: number
-  pageNumber?: number
-  search?: string
-  startDate: string
-  endDate: string
+  limit?: number;
+  pageNumber?: number;
+  search?: string;
+  startDate: string;
+  endDate: string;
 }
 
 export const meetingsApi = createApi({
-  reducerPath: "meetingsApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_BASE_URL,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("token")
-      if (token) {
-        headers.set("Authorization", token)
-      }
-      return headers
-    },
-  }),
+  reducerPath: 'meetingsApi',
+  baseQuery,
   endpoints: (builder) => ({
-    getMeetings: builder.query<MeetingsResponse, GetMeetingsParams>({
+    getMeetings: builder.query<GetMeetingsResponse, GetMeetingsParams>({
       query: (params) => ({
-        url: "/lead/meeting/getMeetings",
-        method: "GET",
-        params: {
-          limit: params.limit || 10,
-          pageNumber: params.pageNumber || 1,
-          search: params.search || "",
-          startDate: params.startDate,
-          endDate: params.endDate,
-        },
+        url: '/lead/meeting/getMeetings',
+        params,
       }),
     }),
   }),
-})
+});
 
-export const { useGetMeetingsQuery } = meetingsApi 
+export const { useGetMeetingsQuery } = meetingsApi; 
