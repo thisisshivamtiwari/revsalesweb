@@ -7,7 +7,6 @@ import {
   startOfMonth,
   endOfMonth,
   eachDayOfInterval,
-  eachHourOfInterval,
   isSameDay,
   parseISO,
   addDays,
@@ -18,12 +17,8 @@ import {
   subMonths,
   startOfDay,
   endOfDay,
-  isWithinInterval,
-  addHours,
-  isSameHour,
   setHours,
   getHours,
-  setMinutes,
 } from "date-fns"
 import {
   Calendar as CalendarIcon,
@@ -39,7 +34,6 @@ import {
 import { useGetMeetingsQuery } from "@/lib/features/meetings/meetingsApi"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
 import { VerticalNavigation } from "@/components/ui/vertical-navigation"
 import {
@@ -72,12 +66,7 @@ export function CalendarPage() {
     }
   }, [navigate])
 
-  const handleLogout = () => {
-    localStorage.removeItem("token")
-    localStorage.removeItem("user")
-    toast.success("Logged out successfully")
-    navigate("/login")
-  }
+
 
   const getDateRange = () => {
     switch (view) {
@@ -153,13 +142,11 @@ export function CalendarPage() {
 
   const getMeetingsForTimeSlot = (day: Date, hour: number) => {
     if (!meetingsData?.data.meetings) return []
-    
-    const slotStart = setMinutes(setHours(startOfDay(day), hour), 0)
-    const slotEnd = setMinutes(setHours(startOfDay(day), hour), 59)
+  
     
     return meetingsData.data.meetings.filter((meeting) => {
       const meetingStart = new Date(meeting.startTime)
-      const meetingEnd = new Date(meeting.endTime)
+     
       
       const meetingStartHour = getHours(meetingStart)
       const meetingDay = startOfDay(meetingStart)
@@ -254,7 +241,6 @@ export function CalendarPage() {
 
   const renderTimeSlot = (day: Date, hour: number) => {
     const meetings = getMeetingsForTimeSlot(day, hour)
-    const timeLabel = format(setHours(day, hour), "h a")
     
     return (
       <div
@@ -280,7 +266,7 @@ export function CalendarPage() {
   const renderDayView = () => (
     <div className="flex flex-1 h-[600px] overflow-y-auto">
       <div className="w-16 flex-shrink-0 border-r border-[#2F304D]/20">
-        {TIME_LABELS.map((label, i) => (
+        {TIME_LABELS.map((label) => (
           <div key={label} className="h-[60px] text-xs text-gray-400 text-center pt-1">
             {label}
           </div>
@@ -301,7 +287,7 @@ export function CalendarPage() {
     return (
       <div className="flex flex-1 h-[600px] overflow-y-auto">
         <div className="w-16 flex-shrink-0 border-r border-[#2F304D]/20">
-          {TIME_LABELS.map((label, i) => (
+          {TIME_LABELS.map((label) => (
             <div key={label} className="h-[60px] text-xs text-gray-400 text-center pt-1">
               {label}
             </div>
