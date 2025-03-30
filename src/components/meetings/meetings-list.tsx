@@ -1,7 +1,66 @@
-import { format } from "date-fns"
-import { Calendar, Clock, MapPin, Users } from "lucide-react"
+import { format, isValid, parseISO } from "date-fns"
+import { Calendar, Clock, MapPin, Users, Link as LinkIcon } from "lucide-react"
 import { useGetMeetingsQuery } from "@/lib/features/meetings/meetingsApi"
-import { Meeting } from "@/lib/types/meetings"
+import { cn } from "@/lib/utils"
+
+interface Attendee {
+  _id: string
+  name: string
+  email: string
+  status: string
+}
+
+interface Meeting {
+  _id: string
+  meetingId: string
+  title: string
+  description: string
+  startTime: string
+  endTime: string
+  location: string
+  meetingStatus: string
+  attendees: Attendee[]
+  link?: string
+}
+
+const StatusBadge = ({ status }: { status: string }) => {
+  const statusConfig = {
+    scheduled: {
+      bg: "bg-emerald-500/10",
+      text: "text-emerald-400",
+      border: "border-emerald-500/20"
+    },
+    completed: {
+      bg: "bg-blue-500/10",
+      text: "text-blue-400",
+      border: "border-blue-500/20"
+    },
+    cancelled: {
+      bg: "bg-red-500/10",
+      text: "text-red-400",
+      border: "border-red-500/20"
+    },
+    default: {
+      bg: "bg-yellow-500/10",
+      text: "text-yellow-400",
+      border: "border-yellow-500/20"
+    }
+  }
+
+  const config = statusConfig[status.toLowerCase()] || statusConfig.default
+
+  return (
+    <span className={cn(
+      "px-3 py-1 text-xs font-medium rounded-full border",
+      "transition-colors duration-200",
+      config.bg,
+      config.text,
+      config.border
+    )}>
+      {status}
+    </span>
+  )
+}
 
 export function MeetingsList() {
   // Get today's date in YYYY-MM-DD format
@@ -12,6 +71,31 @@ export function MeetingsList() {
     endDate: today,
     limit: 5,
   })
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = parseISO(dateString)
+      return isValid(date) ? format(date, "MMM d, yyyy") : "Invalid date"
+    } catch {
+      return "Invalid date"
+    }
+  }
+
+  const formatTime = (startTime: string, endTime: string) => {
+    try {
+      const start = parseISO(startTime)
+      const end = parseISO(endTime)
+      if (!isValid(start) || !isValid(end)) return "Invalid time"
+      
+      const startFormatted = format(start, "h:mm a")
+      const endFormatted = format(end, "h:mm a")
+      const durationInMinutes = Math.round((end.getTime() - start.getTime()) / (1000 * 60))
+      
+      return `${startFormatted} - ${endFormatted} (${durationInMinutes} min)`
+    } catch {
+      return "Invalid time"
+    }
+  }
 
   if (isLoading) {
     return (
@@ -37,52 +121,105 @@ export function MeetingsList() {
     )
   }
 
+  const renderMeetingDetails = (meeting: Meeting) => {
+    const details = [
+      {
+        id: 'date',
+        icon: <Calendar className="w-4 h-4 flex-shrink-0" />,
+        content: formatDate(meeting.startTime)
+      },
+      {
+        id: 'time',
+        icon: <Clock className="w-4 h-4 flex-shrink-0" />,
+        content: formatTime(meeting.startTime, meeting.endTime)
+      },
+      meeting.location && {
+        id: 'location',
+        icon: <MapPin className="w-4 h-4 flex-shrink-0" />,
+        content: meeting.location,
+        fullWidth: true
+      },
+      {
+        id: 'attendees',
+        icon: <Users className="w-4 h-4 flex-shrink-0" />,
+        content: `${meeting.attendees.length} attendees`,
+        fullWidth: true
+      }
+    ].filter(Boolean)
+
+    return details.map(detail => (
+      <div
+        key={`${meeting._id}-${detail.id}`}
+        className={cn(
+          "flex items-center gap-3 text-sm text-gray-400/90 py-1.5",
+          "transition-colors duration-200 hover:text-gray-300",
+          detail.fullWidth ? 'col-span-full' : ''
+        )}
+      >
+        {detail.icon}
+        <span className="truncate">{detail.content}</span>
+      </div>
+    ))
+  }
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {data.data.meetings.map((meeting: Meeting) => (
         <div
-          key={meeting.id}
-          className="bg-[#242744]/30 backdrop-blur-lg rounded-xl border border-[#2F304D]/20 p-4 hover:bg-[#2F304D]/30 transition-colors"
+          key={meeting._id}
+          className={cn(
+            "relative overflow-hidden",
+            "bg-gradient-to-br from-[#242744]/80 to-[#2F304D]/50",
+            "backdrop-blur-lg rounded-xl",
+            "border border-[#2F304D]/30",
+            "shadow-lg shadow-black/5",
+            "p-5",
+            "transition-all duration-300",
+            "hover:shadow-xl hover:shadow-black/10",
+            "hover:border-[#2F304D]/50",
+            "group"
+          )}
         >
-          <div className="flex items-start justify-between">
-            <div>
-              <h3 className="font-semibold text-white mb-1">{meeting.title}</h3>
-              <p className="text-sm text-gray-400 line-clamp-2">
-                {meeting.description}
-              </p>
-            </div>
-            <span
-              className={`px-2 py-1 text-xs rounded-full ${
-                meeting.status === "scheduled"
-                  ? "bg-green-500/20 text-green-400"
-                  : meeting.status === "completed"
-                  ? "bg-blue-500/20 text-blue-400"
-                  : "bg-yellow-500/20 text-yellow-400"
-              }`}
-            >
-              {meeting.status}
-            </span>
-          </div>
+          {/* Background gradient effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#FF5A81]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-          <div className="mt-4 grid grid-cols-2 gap-4">
-            <div className="flex items-center text-sm text-gray-400">
-              <Calendar className="w-4 h-4 mr-2" />
-              {format(new Date(meeting.date), "MMM d, yyyy")}
+          <div className="relative">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-lg font-semibold text-white mb-2 truncate group-hover:text-[#FF5A81] transition-colors">
+                  {meeting.title}
+                </h3>
+                <p className="text-sm text-gray-400/90 line-clamp-2 group-hover:text-gray-400 transition-colors">
+                  {meeting.description}
+                </p>
+              </div>
+              <StatusBadge status={meeting.meetingStatus} />
             </div>
-            <div className="flex items-center text-sm text-gray-400">
-              <Clock className="w-4 h-4 mr-2" />
-              {meeting.time} ({meeting.duration} min)
+
+            {/* Meeting Details Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
+              {renderMeetingDetails(meeting)}
             </div>
-            {meeting.location && (
-              <div className="flex items-center text-sm text-gray-400 col-span-2">
-                <MapPin className="w-4 h-4 mr-2" />
-                {meeting.location}
+
+            {/* Meeting Link if available */}
+            {meeting.link && (
+              <div className="mt-4 pt-4 border-t border-[#2F304D]/30">
+                <a
+                  href={meeting.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(
+                    "inline-flex items-center gap-2 text-sm",
+                    "text-[#FF5A81]/90 hover:text-[#FF5A81]",
+                    "transition-colors duration-200"
+                  )}
+                >
+                  <LinkIcon className="w-4 h-4" />
+                  <span>Join Meeting</span>
+                </a>
               </div>
             )}
-            <div className="flex items-center text-sm text-gray-400 col-span-2">
-              <Users className="w-4 h-4 mr-2" />
-              {meeting.attendees.length} attendees
-            </div>
           </div>
         </div>
       ))}

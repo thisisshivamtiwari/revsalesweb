@@ -5,6 +5,7 @@ import { Dashboard } from "./components/dashboard/dashboard"
 import { Header } from "./components/ui/header"
 import { CalendarPage } from "./components/calendar/calendar-page"
 import { TeamsPage } from "./components/teams/teams-page"
+import { SettingsPage } from "./components/settings/settings-page"
 
 function App() {
   return (
@@ -20,9 +21,42 @@ function App() {
           }
         />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/teams" element={<TeamsPage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <>
+            
+            <Dashboard />
+            </>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <>
+             
+              <CalendarPage />
+            </>
+          }
+        />
+        <Route
+          path="/teams"
+          element={
+            <>
+              
+              <TeamsPage />
+            </>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <>
+              
+              <SettingsPage />
+            </>
+          }
+        />
       </Routes>
     </div>
   )

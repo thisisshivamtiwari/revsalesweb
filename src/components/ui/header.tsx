@@ -1,7 +1,37 @@
-import { BarChart3 } from "lucide-react"
-import { Button } from "./button"
+import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
+import {
+  LayoutDashboard,
+  Calendar,
+  Users,
+  Settings,
+  BarChart3,
+} from "lucide-react"
+import { Button } from "./button"
 import { useNavigate } from "react-router-dom"
+
+const navigation = [
+  {
+    name: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    name: "Calendar",
+    href: "/calendar",
+    icon: Calendar,
+  },
+  {
+    name: "Teams",
+    href: "/teams",
+    icon: Users,
+  },
+  {
+    name: "Settings",
+    href: "/settings",
+    icon: Settings,
+  },
+]
 
 const GlassContainer = ({
   children,
@@ -24,6 +54,7 @@ const GlassContainer = ({
 }
 
 export function Header() {
+  const location = useLocation()
   const navigate = useNavigate()
 
   return (
@@ -37,14 +68,20 @@ export function Header() {
             <span className="text-xl font-bold text-white">RevSales</span>
           </div>
           <nav className="hidden md:flex space-x-8">
-            {["Features", "Pricing", "Testimonials", "Contact"].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="text-gray-300 hover:text-white transition-colors"
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={cn(
+                  "flex items-center gap-2 text-gray-300 hover:text-white transition-colors",
+                  location.pathname === item.href
+                    ? "text-white"
+                    : "text-gray-300"
+                )}
               >
-                {item}
-              </a>
+                <item.icon className="h-5 w-5" />
+                {item.name}
+              </Link>
             ))}
           </nav>
           <div className="flex items-center space-x-4">
