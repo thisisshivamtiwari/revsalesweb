@@ -19,7 +19,6 @@ import {
   Palette,
   Package,
   Wand2,
-  CreditCard,
   Briefcase,
   Shield,
   FileArchive,
@@ -32,6 +31,7 @@ import {
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { OrganizationSettings } from "./organization-settings"
 
 interface NavItemProps {
   icon: React.ReactNode
@@ -209,6 +209,47 @@ interface TaskType {
   description: string
   category: string
   isDefault: boolean
+  createdAt: string
+}
+
+interface Package {
+  id: string
+  name: string
+  description: string
+  price: number
+  status: 'active' | 'inactive'
+  features: string[]
+  createdAt: string
+}
+
+interface ScriptWizard {
+  id: string
+  name: string
+  description: string
+  category: string
+  status: 'active' | 'inactive'
+  lastUpdated: string
+  createdAt: string
+}
+
+interface Proposal {
+  id: string
+  name: string
+  description: string
+  category: string
+  status: 'active' | 'inactive'
+  lastUpdated: string
+  createdAt: string
+}
+
+interface Service {
+  id: string
+  name: string
+  description: string
+  price: number
+  duration: string
+  status: 'active' | 'inactive'
+  category: string
   createdAt: string
 }
 
@@ -443,6 +484,101 @@ export function SettingsPage() {
     }
   ])
 
+  const [showPackages, setShowPackages] = useState(false)
+  const [showScriptWizards, setShowScriptWizards] = useState(false)
+  const [showProposals, setShowProposals] = useState(false)
+  const [showServices, setShowServices] = useState(false)
+  const [packageSearchQuery, setPackageSearchQuery] = useState("")
+  const [scriptWizardSearchQuery, setScriptWizardSearchQuery] = useState("")
+  const [proposalSearchQuery, setProposalSearchQuery] = useState("")
+  const [serviceSearchQuery, setServiceSearchQuery] = useState("")
+
+  const [packages] = useState<Package[]>([
+    {
+      id: "1",
+      name: "Basic Package",
+      description: "Essential features for small businesses",
+      price: 99,
+      status: "active",
+      features: ["Lead Management", "Task Management", "Basic Reports"],
+      createdAt: "2024-02-20"
+    },
+    {
+      id: "2",
+      name: "Pro Package",
+      description: "Advanced features for growing teams",
+      price: 199,
+      status: "active",
+      features: ["All Basic Features", "Advanced Analytics", "API Access"],
+      createdAt: "2024-02-19"
+    }
+  ])
+
+  const [scriptWizards] = useState<ScriptWizard[]>([
+    {
+      id: "1",
+      name: "Sales Call Script",
+      description: "Guided script for sales calls",
+      category: "Sales",
+      status: "active",
+      lastUpdated: "2024-02-20",
+      createdAt: "2024-02-15"
+    },
+    {
+      id: "2",
+      name: "Support Workflow",
+      description: "Customer support interaction guide",
+      category: "Support",
+      status: "active",
+      lastUpdated: "2024-02-19",
+      createdAt: "2024-02-10"
+    }
+  ])
+
+  const [proposals] = useState<Proposal[]>([
+    {
+      id: "1",
+      name: "Standard Proposal",
+      description: "Basic business proposal template",
+      category: "Sales",
+      status: "active",
+      lastUpdated: "2024-02-20",
+      createdAt: "2024-02-15"
+    },
+    {
+      id: "2",
+      name: "Enterprise Solution",
+      description: "Comprehensive enterprise proposal",
+      category: "Enterprise",
+      status: "active",
+      lastUpdated: "2024-02-19",
+      createdAt: "2024-02-10"
+    }
+  ])
+
+  const [services] = useState<Service[]>([
+    {
+      id: "1",
+      name: "Consultation",
+      description: "One-on-one business consultation",
+      price: 150,
+      duration: "1 hour",
+      status: "active",
+      category: "Consulting",
+      createdAt: "2024-02-20"
+    },
+    {
+      id: "2",
+      name: "Training Session",
+      description: "Team training and workshop",
+      price: 299,
+      duration: "2 hours",
+      status: "active",
+      category: "Training",
+      createdAt: "2024-02-19"
+    }
+  ])
+
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
@@ -556,6 +692,54 @@ export function SettingsPage() {
     console.log("Delete task type:", typeId)
   }
 
+  const handleAddPackage = () => {
+    console.log("Add new package")
+  }
+
+  const handleEditPackage = (packageId: string) => {
+    console.log("Edit package:", packageId)
+  }
+
+  const handleDeletePackage = (packageId: string) => {
+    console.log("Delete package:", packageId)
+  }
+
+  const handleAddScriptWizard = () => {
+    console.log("Add new script wizard")
+  }
+
+  const handleEditScriptWizard = (wizardId: string) => {
+    console.log("Edit script wizard:", wizardId)
+  }
+
+  const handleDeleteScriptWizard = (wizardId: string) => {
+    console.log("Delete script wizard:", wizardId)
+  }
+
+  const handleAddProposal = () => {
+    console.log("Add new proposal")
+  }
+
+  const handleEditProposal = (proposalId: string) => {
+    console.log("Edit proposal:", proposalId)
+  }
+
+  const handleDeleteProposal = (proposalId: string) => {
+    console.log("Delete proposal:", proposalId)
+  }
+
+  const handleAddService = () => {
+    console.log("Add new service")
+  }
+
+  const handleEditService = (serviceId: string) => {
+    console.log("Edit service:", serviceId)
+  }
+
+  const handleDeleteService = (serviceId: string) => {
+    console.log("Delete service:", serviceId)
+  }
+
   const filteredRules = whatsappRules.filter(rule =>
     rule.name.toLowerCase().includes(whatsappSearchQuery.toLowerCase()) ||
     rule.description.toLowerCase().includes(whatsappSearchQuery.toLowerCase())
@@ -596,6 +780,28 @@ export function SettingsPage() {
     type.name.toLowerCase().includes(taskTypeSearchQuery.toLowerCase()) ||
     type.description.toLowerCase().includes(taskTypeSearchQuery.toLowerCase())
   )
+
+  const filteredPackages = packages.filter(pkg =>
+    pkg.name.toLowerCase().includes(packageSearchQuery.toLowerCase()) ||
+    pkg.description.toLowerCase().includes(packageSearchQuery.toLowerCase())
+  )
+
+  const filteredScriptWizards = scriptWizards.filter(wizard =>
+    wizard.name.toLowerCase().includes(scriptWizardSearchQuery.toLowerCase()) ||
+    wizard.description.toLowerCase().includes(scriptWizardSearchQuery.toLowerCase())
+  )
+
+  const filteredProposals = proposals.filter(proposal =>
+    proposal.name.toLowerCase().includes(proposalSearchQuery.toLowerCase()) ||
+    proposal.description.toLowerCase().includes(proposalSearchQuery.toLowerCase())
+  )
+
+  const filteredServices = services.filter(service =>
+    service.name.toLowerCase().includes(serviceSearchQuery.toLowerCase()) ||
+    service.description.toLowerCase().includes(serviceSearchQuery.toLowerCase())
+  )
+
+  const [showOrganizationSettings, setShowOrganizationSettings] = useState(false)
 
   return (
     <div className="min-h-screen bg-[#1C1D2E]">
@@ -1417,7 +1623,7 @@ export function SettingsPage() {
             </div>
           )}
 
-          {activeSection === "customization" && !showCustomization && (
+          {activeSection === "customization" && !showCustomization && !showPackages && !showScriptWizards && !showProposals && !showServices && (
             <div className="space-y-6">
               <SettingsCard
                 title="Customization & Preferences"
@@ -1433,34 +1639,33 @@ export function SettingsPage() {
                   <SettingsGridItem
                     icon={<Package className="w-5 h-5" />}
                     title="Packages"
-                    description="Manage and customize package offerings"
+                    description="Manage packages and pricing options"
+                    onClick={() => setShowPackages(true)}
                   />
                   <SettingsGridItem
                     icon={<Wand2 className="w-5 h-5" />}
                     title="Script Wizards"
-                    description="Create and manage script templates"
+                    description="Configure script templates and wizards"
+                    onClick={() => setShowScriptWizards(true)}
                   />
                   <SettingsGridItem
                     icon={<FileText className="w-5 h-5" />}
                     title="Proposals"
                     description="Manage proposal templates and settings"
-                  />
-                  <SettingsGridItem
-                    icon={<CreditCard className="w-5 h-5" />}
-                    title="Digital Card"
-                    description="Customize your digital business card"
+                    onClick={() => setShowProposals(true)}
                   />
                   <SettingsGridItem
                     icon={<Briefcase className="w-5 h-5" />}
                     title="Services"
-                    description="Configure and manage service offerings"
+                    description="Configure service offerings and pricing"
+                    onClick={() => setShowServices(true)}
                   />
                 </div>
               </SettingsCard>
             </div>
           )}
 
-          {activeSection === "customization" && showCustomization && !showLeadStatus && !showTaskTypes && (
+          {activeSection === "customization" && showCustomization && !showPackages && !showScriptWizards && !showProposals && !showServices && !showLeadStatus && !showTaskTypes && (
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-6">
                 <Button
@@ -1490,6 +1695,447 @@ export function SettingsPage() {
                     title="Task Types"
                     description="Configure and manage task type options"
                     onClick={() => setShowTaskTypes(true)}
+                  />
+                </div>
+              </SettingsCard>
+            </div>
+          )}
+
+          {activeSection === "customization" && showPackages && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowPackages(false)}
+                  className="p-2 text-gray-400 hover:text-white hover:bg-[#2F304D]/20 rounded-lg"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </Button>
+                <h2 className="text-xl font-semibold text-white">Manage Packages</h2>
+              </div>
+
+              <div className="bg-[#242744]/20 backdrop-blur-sm border border-[#2F304D]/20 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      type="text"
+                      placeholder="Search packages..."
+                      value={packageSearchQuery}
+                      onChange={(e) => setPackageSearchQuery(e.target.value)}
+                      className="w-full pl-9 bg-[#2F304D]/10 border-[#2F304D]/20 text-white placeholder:text-gray-400"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleAddPackage}
+                    className="bg-[#FF5A81] text-white hover:bg-[#FF5A81]/90 gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Package
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {filteredPackages.map((pkg) => (
+                    <div
+                      key={pkg.id}
+                      className="flex items-center justify-between p-4 bg-[#2F304D]/10 border border-[#2F304D]/20 rounded-lg hover:bg-[#2F304D]/20 transition-colors group"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <h3 className="text-gray-200 font-medium">{pkg.name}</h3>
+                          <span
+                            className={cn(
+                              "px-2 py-0.5 text-xs rounded-full",
+                              pkg.status === "active"
+                                ? "bg-green-500/10 text-green-500 border border-green-500/20"
+                                : "bg-gray-500/10 text-gray-400 border border-gray-500/20"
+                            )}
+                          >
+                            {pkg.status}
+                          </span>
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                            ${pkg.price}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-400 mt-1">{pkg.description}</p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {pkg.features.map((feature, index) => (
+                            <span
+                              key={index}
+                              className="px-2 py-0.5 text-xs rounded-full bg-[#2F304D]/40 text-gray-300"
+                            >
+                              {feature}
+                            </span>
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2">Created on {new Date(pkg.createdAt).toLocaleDateString()}</p>
+                      </div>
+                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditPackage(pkg.id)}
+                          className="p-2 text-gray-400 hover:text-white hover:bg-[#2F304D]/40 rounded-lg"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeletePackage(pkg.id)}
+                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeSection === "customization" && showScriptWizards && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowScriptWizards(false)}
+                  className="p-2 text-gray-400 hover:text-white hover:bg-[#2F304D]/20 rounded-lg"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </Button>
+                <h2 className="text-xl font-semibold text-white">Script Wizards</h2>
+              </div>
+
+              <div className="bg-[#242744]/20 backdrop-blur-sm border border-[#2F304D]/20 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      type="text"
+                      placeholder="Search script wizards..."
+                      value={scriptWizardSearchQuery}
+                      onChange={(e) => setScriptWizardSearchQuery(e.target.value)}
+                      className="w-full pl-9 bg-[#2F304D]/10 border-[#2F304D]/20 text-white placeholder:text-gray-400"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleAddScriptWizard}
+                    className="bg-[#FF5A81] text-white hover:bg-[#FF5A81]/90 gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Wizard
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {filteredScriptWizards.map((wizard) => (
+                    <div
+                      key={wizard.id}
+                      className="flex items-center justify-between p-4 bg-[#2F304D]/10 border border-[#2F304D]/20 rounded-lg hover:bg-[#2F304D]/20 transition-colors group"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <h3 className="text-gray-200 font-medium">{wizard.name}</h3>
+                          <span
+                            className={cn(
+                              "px-2 py-0.5 text-xs rounded-full",
+                              wizard.status === "active"
+                                ? "bg-green-500/10 text-green-500 border border-green-500/20"
+                                : "bg-gray-500/10 text-gray-400 border border-gray-500/20"
+                            )}
+                          >
+                            {wizard.status}
+                          </span>
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-purple-500/10 text-purple-500 border border-purple-500/20">
+                            {wizard.category}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-400 mt-1">{wizard.description}</p>
+                        <div className="flex items-center gap-4 mt-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500">Last Updated:</span>
+                            <span className="text-xs text-gray-300">{new Date(wizard.lastUpdated).toLocaleDateString()}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500">Created:</span>
+                            <span className="text-xs text-gray-300">{new Date(wizard.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditScriptWizard(wizard.id)}
+                          className="p-2 text-gray-400 hover:text-white hover:bg-[#2F304D]/40 rounded-lg"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteScriptWizard(wizard.id)}
+                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeSection === "customization" && showProposals && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowProposals(false)}
+                  className="p-2 text-gray-400 hover:text-white hover:bg-[#2F304D]/20 rounded-lg"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </Button>
+                <h2 className="text-xl font-semibold text-white">Proposals</h2>
+              </div>
+
+              <div className="bg-[#242744]/20 backdrop-blur-sm border border-[#2F304D]/20 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      type="text"
+                      placeholder="Search proposals..."
+                      value={proposalSearchQuery}
+                      onChange={(e) => setProposalSearchQuery(e.target.value)}
+                      className="w-full pl-9 bg-[#2F304D]/10 border-[#2F304D]/20 text-white placeholder:text-gray-400"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleAddProposal}
+                    className="bg-[#FF5A81] text-white hover:bg-[#FF5A81]/90 gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Proposal
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {filteredProposals.map((proposal) => (
+                    <div
+                      key={proposal.id}
+                      className="flex items-center justify-between p-4 bg-[#2F304D]/10 border border-[#2F304D]/20 rounded-lg hover:bg-[#2F304D]/20 transition-colors group"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <h3 className="text-gray-200 font-medium">{proposal.name}</h3>
+                          <span
+                            className={cn(
+                              "px-2 py-0.5 text-xs rounded-full",
+                              proposal.status === "active"
+                                ? "bg-green-500/10 text-green-500 border border-green-500/20"
+                                : "bg-gray-500/10 text-gray-400 border border-gray-500/20"
+                            )}
+                          >
+                            {proposal.status}
+                          </span>
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-purple-500/10 text-purple-500 border border-purple-500/20">
+                            {proposal.category}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-400 mt-1">{proposal.description}</p>
+                        <div className="flex items-center gap-4 mt-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500">Last Updated:</span>
+                            <span className="text-xs text-gray-300">{new Date(proposal.lastUpdated).toLocaleDateString()}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500">Created:</span>
+                            <span className="text-xs text-gray-300">{new Date(proposal.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditProposal(proposal.id)}
+                          className="p-2 text-gray-400 hover:text-white hover:bg-[#2F304D]/40 rounded-lg"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteProposal(proposal.id)}
+                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeSection === "customization" && showServices && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowServices(false)}
+                  className="p-2 text-gray-400 hover:text-white hover:bg-[#2F304D]/20 rounded-lg"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </Button>
+                <h2 className="text-xl font-semibold text-white">Services</h2>
+              </div>
+
+              <div className="bg-[#242744]/20 backdrop-blur-sm border border-[#2F304D]/20 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Input
+                      type="text"
+                      placeholder="Search services..."
+                      value={serviceSearchQuery}
+                      onChange={(e) => setServiceSearchQuery(e.target.value)}
+                      className="w-full pl-9 bg-[#2F304D]/10 border-[#2F304D]/20 text-white placeholder:text-gray-400"
+                    />
+                  </div>
+                  <Button
+                    onClick={handleAddService}
+                    className="bg-[#FF5A81] text-white hover:bg-[#FF5A81]/90 gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Service
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {filteredServices.map((service) => (
+                    <div
+                      key={service.id}
+                      className="flex items-center justify-between p-4 bg-[#2F304D]/10 border border-[#2F304D]/20 rounded-lg hover:bg-[#2F304D]/20 transition-colors group"
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <h3 className="text-gray-200 font-medium">{service.name}</h3>
+                          <span
+                            className={cn(
+                              "px-2 py-0.5 text-xs rounded-full",
+                              service.status === "active"
+                                ? "bg-green-500/10 text-green-500 border border-green-500/20"
+                                : "bg-gray-500/10 text-gray-400 border border-gray-500/20"
+                            )}
+                          >
+                            {service.status}
+                          </span>
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">
+                            ${service.price}
+                          </span>
+                          <span className="px-2 py-0.5 text-xs rounded-full bg-purple-500/10 text-purple-500 border border-purple-500/20">
+                            {service.category}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-400 mt-1">{service.description}</p>
+                        <div className="flex items-center gap-4 mt-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500">Duration:</span>
+                            <span className="text-xs text-gray-300">{service.duration}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500">Created:</span>
+                            <span className="text-xs text-gray-300">{new Date(service.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditService(service.id)}
+                          className="p-2 text-gray-400 hover:text-white hover:bg-[#2F304D]/40 rounded-lg"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteService(service.id)}
+                          className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeSection === "organization" && !showOrganizationSettings && (
+            <div className="space-y-6">
+              <SettingsCard
+                title="Organization & Disclosure"
+                description="Manage organization settings and legal documents"
+              >
+                <div className="grid grid-cols-2 gap-4">
+                  <SettingsGridItem
+                    icon={<Building2 className="w-5 h-5" />}
+                    title="Organization Settings"
+                    description="Configure organization-wide preferences and settings"
+                    onClick={() => setShowOrganizationSettings(true)}
+                  />
+                  <SettingsGridItem
+                    icon={<Shield className="w-5 h-5" />}
+                    title="Disclosure"
+                    description="View privacy policy and terms of use"
+                  />
+                </div>
+              </SettingsCard>
+            </div>
+          )}
+
+          {activeSection === "organization" && showOrganizationSettings && (
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowOrganizationSettings(false)}
+                  className="p-2 text-gray-400 hover:text-white hover:bg-[#2F304D]/20 rounded-lg"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </Button>
+                <h2 className="text-xl font-semibold text-white">Organization Settings</h2>
+              </div>
+              <OrganizationSettings />
+            </div>
+          )}
+
+          {activeSection === "data" && (
+            <div className="space-y-6">
+              <SettingsCard
+                title="Data Management"
+                description="Export and manage your organization's data"
+              >
+                <div className="grid grid-cols-1 gap-4">
+                  <SettingsGridItem
+                    icon={<FileDown className="w-5 h-5" />}
+                    title="Export Data"
+                    description="Download and export your organization's data"
                   />
                 </div>
               </SettingsCard>
@@ -1662,45 +2308,6 @@ export function SettingsPage() {
                   ))}
                 </div>
               </div>
-            </div>
-          )}
-
-          {activeSection === "organization" && (
-            <div className="space-y-6">
-              <SettingsCard
-                title="Organization & Disclosure"
-                description="Manage organization settings and legal documents"
-              >
-                <div className="grid grid-cols-2 gap-4">
-                  <SettingsGridItem
-                    icon={<Building2 className="w-5 h-5" />}
-                    title="Organization Settings"
-                    description="Configure organization-wide preferences and settings"
-                  />
-                  <SettingsGridItem
-                    icon={<Shield className="w-5 h-5" />}
-                    title="Disclosure"
-                    description="View privacy policy and terms of use"
-                  />
-                </div>
-              </SettingsCard>
-            </div>
-          )}
-
-          {activeSection === "data" && (
-            <div className="space-y-6">
-              <SettingsCard
-                title="Data Management"
-                description="Export and manage your organization's data"
-              >
-                <div className="grid grid-cols-1 gap-4">
-                  <SettingsGridItem
-                    icon={<FileDown className="w-5 h-5" />}
-                    title="Export Data"
-                    description="Download and export your organization's data"
-                  />
-                </div>
-              </SettingsCard>
             </div>
           )}
         </div>
