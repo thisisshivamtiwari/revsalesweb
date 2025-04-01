@@ -18,6 +18,36 @@ interface LoginResponse {
   }
 }
 
+interface UserDetails {
+  _id: string
+  fullName: string
+  email: string
+  phoneNumber: number
+  profileImg: string
+  departmentId: number
+  departmentName: string
+  designationId: number
+  designationName: string
+}
+
+interface UserDetailsResponse {
+  status: boolean
+  code: number
+  message: string
+  data: {
+    user: UserDetails
+  }
+}
+
+interface EditUserRequest {
+  departmentId: number
+  designationId: number
+  phoneNumber: string
+  fullName: string
+  email: string
+  profileImg: string
+}
+
 export const authApi = createApi({
   reducerPath: "authApi",
   baseQuery: fetchBaseQuery({
@@ -30,6 +60,7 @@ export const authApi = createApi({
       return headers
     },
   }),
+  tagTypes: ["User"],
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
       query: (credentials) => ({
@@ -41,7 +72,26 @@ export const authApi = createApi({
         body: credentials,
       }),
     }),
+    getUserDetails: builder.query<UserDetailsResponse, void>({
+      query: () => ({
+        url: "/user/getUserDetails",
+        method: "GET",
+      }),
+      providesTags: ["User"],
+    }),
+    editUser: builder.mutation<UserDetailsResponse, EditUserRequest>({
+      query: (userData) => ({
+        url: "/user/editUser",
+        method: "PATCH",
+        body: userData,
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
 })
 
-export const { useLoginMutation } = authApi 
+export const { 
+  useLoginMutation, 
+  useGetUserDetailsQuery,
+  useEditUserMutation,
+} = authApi 

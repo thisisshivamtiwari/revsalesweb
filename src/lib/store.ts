@@ -5,6 +5,8 @@ import { leadsApi } from './features/leads/leadsApi';
 import { tasksApi } from './features/tasks/tasksApi';
 import { dashboardApi } from './features/dashboard/dashboardApi';
 import { teamsApi } from './features/teams/teamsApi';
+import { userApi } from './features/user/userApi';
+import { whatsappApi } from './features/whatsapp/whatsappApi';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +16,8 @@ export const store = configureStore({
     [tasksApi.reducerPath]: tasksApi.reducer,
     [dashboardApi.reducerPath]: dashboardApi.reducer,
     [teamsApi.reducerPath]: teamsApi.reducer,
+    [userApi.reducerPath]: userApi.reducer,
+    [whatsappApi.reducerPath]: whatsappApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -22,7 +26,9 @@ export const store = configureStore({
       leadsApi.middleware,
       tasksApi.middleware,
       dashboardApi.middleware,
-      teamsApi.middleware
+      teamsApi.middleware,
+      userApi.middleware,
+      whatsappApi.middleware
     ),
 });
 

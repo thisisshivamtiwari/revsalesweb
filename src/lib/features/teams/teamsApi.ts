@@ -1,4 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQuery } from '@/lib/utils/baseQuery';
 
 interface UserPerformance {
   fullName: string;
@@ -21,19 +22,12 @@ interface GetUserPerformanceResponse {
 
 export const teamsApi = createApi({
   reducerPath: 'teamsApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'https://rworldbelite.retvenslabs.com/api',
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        headers.set('Authorization', token);
-      }
-      return headers;
-    },
-  }),
+  baseQuery,
   endpoints: (builder) => ({
     getUserPerformance: builder.query<GetUserPerformanceResponse, void>({
-      query: () => '/sales/user/getUserPerformance',
+      query: () => ({
+        url: '/sales/user/getUserPerformance',
+      }),
     }),
   }),
 });
