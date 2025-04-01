@@ -63,10 +63,10 @@ export default function ManageMembers({ onBack }: ManageMembersProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const response = await addMember({
+      await addMember({
         ...formData,
         phoneNumber: Number(formData.phoneNumber)
-      }).unwrap()
+      })
       
       toast({
         title: "Success",
