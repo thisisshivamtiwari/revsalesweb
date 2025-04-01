@@ -131,6 +131,17 @@ interface DeleteTeamResponse {
   message: string;
 }
 
+interface LeadRulesResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: any;
+}
+
+interface LeadRulesQueryParams {
+  // Add any necessary query parameters here
+}
+
 export const teamsApi = createApi({
   reducerPath: 'teamsApi',
   baseQuery: fetchBaseQuery({
@@ -196,6 +207,13 @@ export const teamsApi = createApi({
       }),
       invalidatesTags: ['Teams'],
     }),
+    getLeadRules: builder.query<{ status: boolean; code: number; message: string; data: LeadRulesResponse }, LeadRulesQueryParams>({
+      query: (params) => ({
+        url: 'lead/getRule',
+        method: 'GET',
+        params,
+      }),
+    }),
   }),
 })
 
@@ -207,4 +225,5 @@ export const {
   useCreateTeamMutation,
   useUpdateTeamMutation,
   useDeleteTeamMutation,
+  useGetLeadRulesQuery,
 } = teamsApi 

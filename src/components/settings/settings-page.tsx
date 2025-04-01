@@ -24,6 +24,7 @@ import {
   Shield,
   FileArchive,
   UserPlus,
+  Share2,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -32,6 +33,7 @@ import { MyAccount } from "./my-account"
 import { WhatsappAutomation } from "./whatsapp-automation"
 import ManageTeams from './manage-teams'
 import ManageMembers from './manage-members'
+import LeadDistribution from './lead-distribution'
 
 interface NavItemProps {
   icon: React.ReactNode
@@ -137,7 +139,7 @@ const sections = [
 ]
 
 export function SettingsPage() {
-  const [activeSection, setActiveSection] = useState("account")
+  const [activeSection, setActiveSection] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [showMyAccount, setShowMyAccount] = useState(false)
   const [showWhatsappAutomation, setShowWhatsappAutomation] = useState(false)
@@ -380,73 +382,93 @@ export function SettingsPage() {
       )
     }
 
+    if (activeSection === "lead-distribution") {
+      return (
+        <LeadDistribution
+          onBack={() => setActiveSection(null)}
+        />
+      )
+    }
+
     return null
   }
 
   return (
-    <div className="min-h-screen bg-[#1C1D2E]">
-      <div className="flex">
-        {/* Vertical Navigation */}
-        <div className="w-72 h-screen sticky top-0 p-4 border-r border-[#2F304D]/20 space-y-6">
-          <div className="flex items-center gap-3 mb-6">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="p-2 text-gray-400 hover:text-white hover:bg-[#2F304D]/20 rounded-lg"
-              onClick={() => {
-                if (showManageTeams) {
-                  setShowManageTeams(false)
-                } else if (showWhatsappAutomation) {
-                  setShowWhatsappAutomation(false)
-                } else if (showMyAccount) {
-                  setShowMyAccount(false)
-                } else if (showManageMembers) {
-                  setShowManageMembers(false)
-                } else {
-                  window.history.back()
-                }
-              }}
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </Button>
-            <h1 className="text-xl font-semibold text-white">Settings</h1>
+    <div className="min-h-screen bg-[#1C1D2E] text-white">
+      {activeSection ? (
+        activeSection === 'teams' ? (
+          <ManageTeams onBack={() => setActiveSection(null)} />
+        ) : activeSection === 'members' ? (
+          <ManageMembers onBack={() => setActiveSection(null)} />
+        ) : activeSection === 'lead-distribution' ? (
+          <LeadDistribution onBack={() => setActiveSection(null)} />
+        ) : null
+      ) : (
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          <div className="flex">
+            {/* Vertical Navigation */}
+            <div className="w-72 h-screen sticky top-0 p-4 border-r border-[#2F304D]/20 space-y-6">
+              <div className="flex items-center gap-3 mb-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="p-2 text-gray-400 hover:text-white hover:bg-[#2F304D]/20 rounded-lg"
+                  onClick={() => {
+                    if (showManageTeams) {
+                      setShowManageTeams(false)
+                    } else if (showWhatsappAutomation) {
+                      setShowWhatsappAutomation(false)
+                    } else if (showMyAccount) {
+                      setShowMyAccount(false)
+                    } else if (showManageMembers) {
+                      setShowManageMembers(false)
+                    } else {
+                      window.history.back()
+                    }
+                  }}
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </Button>
+                <h1 className="text-xl font-semibold text-white">Settings</h1>
+              </div>
+
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Search settings..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 bg-[#2F304D]/10 border-[#2F304D]/20 text-white placeholder:text-gray-400"
+                />
+              </div>
+
+              <nav className="space-y-1">
+                {sections.map((section) => (
+                  <NavItem
+                    key={section.id}
+                    icon={section.icon}
+                    label={section.label}
+                    isActive={activeSection === section.id}
+                    onClick={() => {
+                      setActiveSection(section.id)
+                      if (section.id !== "account") {
+                        setShowMyAccount(false)
+                      }
+                      setShowWhatsappAutomation(false)
+                    }}
+                  />
+                ))}
+              </nav>
+            </div>
+
+            {/* Main Content */}
+            <div className="flex-1 p-8 overflow-auto">
+              {renderContent()}
+            </div>
           </div>
-
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <Input
-              type="text"
-              placeholder="Search settings..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 bg-[#2F304D]/10 border-[#2F304D]/20 text-white placeholder:text-gray-400"
-            />
-          </div>
-
-          <nav className="space-y-1">
-            {sections.map((section) => (
-              <NavItem
-                key={section.id}
-                icon={section.icon}
-                label={section.label}
-                isActive={activeSection === section.id}
-                onClick={() => {
-                  setActiveSection(section.id)
-                  if (section.id !== "account") {
-                    setShowMyAccount(false)
-                  }
-                  setShowWhatsappAutomation(false)
-                }}
-              />
-            ))}
-          </nav>
         </div>
-
-        {/* Main Content */}
-        <div className="flex-1 p-8 overflow-auto">
-          {renderContent()}
-        </div>
-      </div>
+      )}
     </div>
   )
 } 
