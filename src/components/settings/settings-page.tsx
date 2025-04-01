@@ -23,13 +23,15 @@ import {
   Briefcase,
   Shield,
   FileArchive,
-  ChevronRight,
+  UserPlus,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input" 
 import { MyAccount } from "./my-account"
 import { WhatsappAutomation } from "./whatsapp-automation"
+import ManageTeams from './manage-teams'
+import ManageMembers from './manage-members'
 
 interface NavItemProps {
   icon: React.ReactNode
@@ -138,6 +140,9 @@ export function SettingsPage() {
   const [activeSection, setActiveSection] = useState("account")
   const [searchQuery, setSearchQuery] = useState("")
   const [showMyAccount, setShowMyAccount] = useState(false)
+  const [showWhatsappAutomation, setShowWhatsappAutomation] = useState(false)
+  const [showManageTeams, setShowManageTeams] = useState(false)
+  const [showManageMembers, setShowManageMembers] = useState(false)
   const [profile, setProfile] = useState({
     departmentId: 56464,
     designationId: 45454,
@@ -146,7 +151,6 @@ export function SettingsPage() {
     email: "asdfghjk",
     profileImg: "profileImgURL"
   })
-  const [showWhatsappAutomation, setShowWhatsappAutomation] = useState(false)
 
   const handleProfileSave = (updatedProfile: typeof profile) => {
     setProfile(updatedProfile)
@@ -162,6 +166,22 @@ export function SettingsPage() {
       return (
         <WhatsappAutomation
           onBack={() => setShowWhatsappAutomation(false)}
+        />
+      )
+    }
+
+    if (showManageTeams) {
+      return (
+        <ManageTeams
+          onBack={() => setShowManageTeams(false)}
+        />
+      )
+    }
+
+    if (showManageMembers) {
+      return (
+        <ManageMembers
+          onBack={() => setShowManageMembers(false)}
         />
       )
     }
@@ -239,6 +259,13 @@ export function SettingsPage() {
                 icon={<Users className="w-5 h-5" />}
                 title="Manage Teams"
                 description="Add, remove, and configure team members and roles"
+                onClick={() => setShowManageTeams(true)}
+              />
+              <SettingsGridItem
+                icon={<UserPlus className="w-5 h-5" />}
+                title="Manage Members"
+                description="Add and manage individual team members and their permissions"
+                onClick={() => setShowManageMembers(true)}
               />
               <SettingsGridItem
                 icon={<Bot className="w-5 h-5" />}
@@ -366,7 +393,19 @@ export function SettingsPage() {
               variant="ghost"
               size="icon"
               className="p-2 text-gray-400 hover:text-white hover:bg-[#2F304D]/20 rounded-lg"
-              onClick={() => window.history.back()}
+              onClick={() => {
+                if (showManageTeams) {
+                  setShowManageTeams(false)
+                } else if (showWhatsappAutomation) {
+                  setShowWhatsappAutomation(false)
+                } else if (showMyAccount) {
+                  setShowMyAccount(false)
+                } else if (showManageMembers) {
+                  setShowManageMembers(false)
+                } else {
+                  window.history.back()
+                }
+              }}
             >
               <ChevronLeft className="w-5 h-5" />
             </Button>

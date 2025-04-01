@@ -1,5 +1,5 @@
 import { useState, Fragment, useEffect, useRef } from "react"
-import { ChevronLeft, Plus, Search, Edit2, Trash2, Loader2, ChevronRight, AlertCircle, X, Image as ImageIcon, Upload, ZoomIn } from "lucide-react"
+import { ChevronLeft, Plus, Search, Edit2, Trash2, Loader2, ChevronRight, AlertCircle, X,  Upload, ZoomIn } from "lucide-react"
 import { useGetWhatsappRulesQuery, useGetLeadStatusQuery, useGetFormFieldsQuery, useAddRuleMutation, useUpdateRuleMutation, useDeleteRuleMutation } from "@/lib/features/whatsapp/whatsappApi"
 import { format } from "date-fns"
 import { useToast } from "@/components/ui/use-toast"
