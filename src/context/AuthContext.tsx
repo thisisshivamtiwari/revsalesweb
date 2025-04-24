@@ -14,7 +14,7 @@ import {
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
-  user: { fullName: string; role: string } | null;
+  user: any | null;
   login: (credentials: LoginRequest) => Promise<{ success: boolean; message: string }>;
   logout: () => void;
   error: string | null;
@@ -26,7 +26,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [user, setUser] = useState<{ fullName: string; role: string } | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   // Check if user is authenticated on initial load
@@ -71,17 +71,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (response.status && response.code === 200 && response.data) {
         // Store auth data
         storeAuthToken(response.data.token);
-        storeUserData({
-          fullName: response.data.fullName,
-          role: response.data.role
-        });
+        
+        // Store all user data
+        storeUserData(response.data);
         
         // Update state
         setIsAuthenticated(true);
-        setUser({
-          fullName: response.data.fullName,
-          role: response.data.role
-        });
+        setUser(response.data);
         
         // Redirect based on role
         if (response.data.role === 'ADMIN') {
