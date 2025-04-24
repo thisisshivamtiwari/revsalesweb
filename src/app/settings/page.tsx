@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import SidebarDemo from "@/components/ui/sidebar-demo";
@@ -31,8 +31,25 @@ import {
   IconHeadset
 } from "@tabler/icons-react";
 
+// Define the type for a settings item
+interface SettingItem {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  variant?: string;
+  link?: string;
+}
+
+// Define the type for a settings category
+interface SettingCategory {
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+  items: SettingItem[];
+}
+
 // Define categories and their settings items
-const settingsCategories = [
+const settingsCategories: SettingCategory[] = [
   {
     id: "account",
     name: "Account",
@@ -74,8 +91,8 @@ const settingsCategories = [
     icon: <IconLayoutDashboard size={20} />,
     items: [
       { id: "add-leads", label: "Add Reference Leads", icon: <IconPlus size={20} className="text-blue-500" /> },
-      { id: "export-data", label: "Export Data", icon: <IconUpload size={20} className="text-green-500" /> },
-      { id: "packages", label: "Packages", icon: <IconNotes size={20} className="text-teal-500" /> }
+      { id: "export-data", label: "Export Data", icon: <IconUpload size={20} className="text-green-500" />, link: "/settings/export-data?category=data" },
+      { id: "packages", label: "Packages", icon: <IconNotes size={20} className="text-teal-500" />, link: "/settings/packages?category=data" }
     ]
   },
   {
@@ -83,8 +100,8 @@ const settingsCategories = [
     name: "Administration",
     icon: <IconAdjustments size={20} />,
     items: [
-      { id: "integrations", label: "Manage Integrations", icon: <IconLink size={20} className="text-purple-500" /> },
-      { id: "organization", label: "Organization Settings", icon: <IconBuilding size={20} className="text-blue-500" /> },
+      { id: "integrations", label: "Manage Integrations", icon: <IconLink size={20} className="text-purple-500" />, link: "/settings/integrations?category=admin" },
+      { id: "organization", label: "Organization Settings", icon: <IconBuilding size={20} className="text-blue-500" />, link: "/settings/organization?category=admin" },
       { id: "disclosure", label: "Disclosure", icon: <IconLock size={20} className="text-red-500" /> }
     ]
   }
@@ -94,6 +111,22 @@ export default function SettingsPage() {
   const { isAuthenticated, isLoading, user, logout } = useAuth();
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState("account");
+  
+  // Read the activeCategory from URL query parameters
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const categoryParam = params.get('activeCategory');
+    if (categoryParam) {
+      setActiveCategory(categoryParam);
+    }
+  }, []);
+
+  // Move navigation logic to useEffect
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isAuthenticated, isLoading, router]);
 
   // Show loading state
   if (isLoading) {
@@ -107,9 +140,8 @@ export default function SettingsPage() {
     );
   }
 
-  // Redirect to login if not authenticated
+  // Return null if not authenticated rather than redirecting in render
   if (!isAuthenticated) {
-    router.push("/login");
     return null;
   }
 
@@ -198,7 +230,13 @@ export default function SettingsPage() {
                         ? 'bg-red-500/10 dark:bg-red-900/20 border-red-500/20 dark:border-red-800/30 text-red-600 dark:text-red-400 hover:bg-red-500/20 dark:hover:bg-red-900/30' 
                         : 'bg-white/10 dark:bg-neutral-800/30 border-white/10 dark:border-neutral-700/30 hover:bg-white/20 dark:hover:bg-neutral-700/40'
                       }`}
-                      onClick={item.id === 'logout' ? logout : undefined}
+                      onClick={() => {
+                        if (item.id === 'logout') {
+                          logout();
+                        } else if (item.link) {
+                          router.push(item.link);
+                        }
+                      }}
                     >
                       <div className="flex items-center mb-3">
                         {item.icon}
