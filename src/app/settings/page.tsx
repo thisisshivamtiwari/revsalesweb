@@ -57,7 +57,6 @@ const settingsCategories: SettingCategory[] = [
     items: [
       { id: "my-account", label: "My Account", icon: <IconUser size={20} className="text-blue-500" /> },
       { id: "notifications", label: "Notifications", icon: <IconBell size={20} className="text-amber-500" /> },
-      { id: "customizations", label: "Customizations", icon: <IconSettings size={20} className="text-purple-500" /> },
       { id: "logout", label: "Logout", icon: <IconLogout size={20} className="text-red-500" />, variant: "danger" }
     ]
   },
@@ -66,10 +65,10 @@ const settingsCategories: SettingCategory[] = [
     name: "Team Management",
     icon: <IconUsers size={20} />,
     items: [
-      { id: "manage-teams", label: "Manage Teams", icon: <IconUsers size={20} className="text-indigo-500" /> },
-      { id: "lead-distribution", label: "Lead Distribution", icon: <IconChartBar size={20} className="text-green-500" /> },
+      { id: "manage-teams", label: "Manage Teams", icon: <IconUsers size={20} className="text-indigo-500" />, link: "/settings/teams?category=team" },
+      { id: "lead-distribution", label: "Lead Distribution", icon: <IconChartBar size={20} className="text-green-500" />, link: "/settings/lead-distribution?category=team" },
       { id: "script-distribution", label: "Script Distribution", icon: <IconWand size={20} className="text-blue-500" /> },
-      { id: "task-distribution", label: "Task Distribution", icon: <IconCalendar size={20} className="text-teal-500" /> }
+      { id: "task-distribution", label: "Task Distribution", icon: <IconCalendar size={20} className="text-teal-500" />, link: "/settings/task-distribution?category=team" }
     ]
   },
   {
@@ -77,12 +76,14 @@ const settingsCategories: SettingCategory[] = [
     name: "Tools & Services",
     icon: <IconTools size={20} />,
     items: [
-      { id: "whatsapp-automation", label: "WhatsApp Automation", icon: <IconBrandWhatsapp size={20} className="text-green-500" /> },
-      { id: "script-wizard", label: "Script Wizard", icon: <IconWand size={20} className="text-purple-500" /> },
-      { id: "proposals", label: "Proposals", icon: <IconPencil size={20} className="text-blue-500" /> },
+      { id: "whatsapp-automation", label: "WhatsApp Automation", icon: <IconBrandWhatsapp size={20} className="text-green-500" />, link: "/settings/whatsapp-automation?category=tools" },
+      { id: "script-wizard", label: "Script Wizard", icon: <IconWand size={20} className="text-purple-500" />, link: "/settings/script-wizard?category=tools" },
+      { id: "proposals", label: "Proposals", icon: <IconPencil size={20} className="text-blue-500" />, link: "/settings/proposals?category=tools" },
       { id: "digital-card", label: "Digital Card", icon: <IconId size={20} className="text-indigo-500" /> },
       { id: "caller-id", label: "Caller ID", icon: <IconPhone size={20} className="text-green-500" /> },
-      { id: "services", label: "Services", icon: <IconHeadset size={20} className="text-amber-500" /> }
+      { id: "services", label: "Services", icon: <IconHeadset size={20} className="text-amber-500" />, link: "/settings/services?category=tools" },
+      { id: "lead-status", label: "Lead Status", icon: <IconChartBar size={20} className="text-blue-500" />, link: "/settings/lead-status?category=tools" },
+      { id: "task-types", label: "Task Types", icon: <IconCalendar size={20} className="text-purple-500" />, link: "/settings/task-types?category=tools" }
     ]
   },
   {
@@ -262,7 +263,6 @@ function getSettingDescription(itemId: string): string {
   const descriptions: Record<string, string> = {
     "my-account": "Update your profile information, email, and password",
     "notifications": "Manage your email and in-app notification preferences",
-    "customizations": "Customize the application interface and features",
     "logout": "Sign out of your account",
     "manage-teams": "Add team members and manage team permissions",
     "lead-distribution": "Configure how leads are distributed among team members",
@@ -274,6 +274,8 @@ function getSettingDescription(itemId: string): string {
     "digital-card": "Create and share your digital business card",
     "caller-id": "Configure caller ID settings for outbound calls",
     "services": "Manage the services your business offers to clients",
+    "lead-status": "Configure and manage lead status categories and workflows",
+    "task-types": "Define and manage different types of tasks for your team",
     "add-leads": "Add reference leads to your database",
     "export-data": "Export your data for backup or analysis",
     "packages": "Manage your subscription packages and billing",
