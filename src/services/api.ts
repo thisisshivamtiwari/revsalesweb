@@ -45,6 +45,65 @@ export interface ExportResponse {
 }
 
 /**
+ * Stores authentication token securely
+ * @param token - JWT token from authentication response
+ */
+export const storeAuthToken = (token: string): void => {
+  localStorage.setItem('auth_token', token);
+};
+
+/**
+ * Retrieves the stored authentication token
+ * @returns The stored token or null if not found
+ */
+export const getAuthToken = (): string | null => {
+  const token = localStorage.getItem('auth_token');
+  // If no token exists, return null
+  if (!token) return null;
+  // Return the token as is - server doesn't expect "Bearer" prefix
+  return token;
+};
+
+/**
+ * Removes the stored authentication token (for logout)
+ */
+export const removeAuthToken = (): void => {
+  localStorage.removeItem('auth_token');
+};
+
+/**
+ * Stores user data in localStorage for quick access
+ * @param userData - User data to store
+ */
+export const storeUserData = (userData: any): void => {
+  localStorage.setItem('user_data', JSON.stringify(userData));
+};
+
+/**
+ * Retrieves stored user data
+ * @returns The stored user data or null if not found
+ */
+export const getUserData = (): any | null => {
+  const userData = localStorage.getItem('user_data');
+  return userData ? JSON.parse(userData) : null;
+};
+
+/**
+ * Removes stored user data (for logout)
+ */
+export const removeUserData = (): void => {
+  localStorage.removeItem('user_data');
+};
+
+/**
+ * Complete logout functionality
+ */
+export const logoutUser = (): void => {
+  removeAuthToken();
+  removeUserData();
+};
+
+/**
  * Authenticates a user with the given credentials
  * @param credentials - Email and password
  * @returns Promise with login response
@@ -65,6 +124,12 @@ export const loginUser = async (credentials: LoginRequest): Promise<LoginRespons
     // For security reasons, avoid logging sensitive information in production
     if (process.env.NODE_ENV !== 'production') {
       console.log('Login response:', { ...data, data: data.data ? { ...data.data, token: '[REDACTED]' } : undefined });
+    }
+    
+    // If login was successful and token was provided, store it
+    if (data.status && data.data?.token) {
+      console.log('Storing authentication token');
+      storeAuthToken(data.data.token);
     }
     
     return data;
@@ -141,7 +206,7 @@ export const exportAllData = async (
     const response = await fetch(`${BASE_URL}${endpoint}?${queryParams.toString()}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': token,
         'Content-Type': 'application/json'
       }
     });
@@ -263,59 +328,3 @@ const generateMockData = (dataType: string, count: number): any[] => {
   
   return mockData;
 };
-
-/**
- * Stores authentication token securely
- * @param token - JWT token from authentication response
- */
-export const storeAuthToken = (token: string): void => {
-  localStorage.setItem('auth_token', token);
-};
-
-/**
- * Retrieves the stored authentication token
- * @returns The stored token or null if not found
- */
-export const getAuthToken = (): string | null => {
-  return localStorage.getItem('auth_token');
-};
-
-/**
- * Removes the stored authentication token (for logout)
- */
-export const removeAuthToken = (): void => {
-  localStorage.removeItem('auth_token');
-};
-
-/**
- * Stores user data in localStorage for quick access
- * @param userData - User data to store
- */
-export const storeUserData = (userData: any): void => {
-  localStorage.setItem('user_data', JSON.stringify(userData));
-};
-
-/**
- * Retrieves stored user data
- * @returns The stored user data or null if not found
- */
-export const getUserData = (): any | null => {
-  const userData = localStorage.getItem('user_data');
-  return userData ? JSON.parse(userData) : null;
-};
-
-/**
- * Removes stored user data (for logout)
- */
-export const removeUserData = (): void => {
-  localStorage.removeItem('user_data');
-};
-
-/**
- * Complete logout functionality
- */
-export const logoutUser = (): void => {
-  removeAuthToken();
-  removeUserData();
-}; 
- 

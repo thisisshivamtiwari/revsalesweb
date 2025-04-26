@@ -48,7 +48,7 @@ export default function ProfilePage() {
               
               <div className="flex flex-col md:flex-row items-start gap-8">
                 <div className="w-32 h-32 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-4xl font-semibold">
-                  {user?.fullName?.split(' ').map(n => n[0]).join('') || 'U'}
+                  {user?.fullName?.split(' ').map((n: string) => n[0]).join('') || 'U'}
                 </div>
                 
                 <div className="flex-1">
@@ -128,5 +128,7 @@ export default function ProfilePage() {
     </div>
   );
 } 
+ 
+ 
  
  
