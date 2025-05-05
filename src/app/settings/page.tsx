@@ -55,7 +55,7 @@ const settingsCategories: SettingCategory[] = [
     name: "Account",
     icon: <IconUser size={20} />,
     items: [
-      { id: "my-account", label: "My Account", icon: <IconUser size={20} className="text-blue-500" /> },
+      { id: "my-account", label: "My Account", icon: <IconUser size={20} className="text-blue-500" />, link: "/settings/my-account" },
       { id: "notifications", label: "Notifications", icon: <IconBell size={20} className="text-amber-500" /> },
       { id: "logout", label: "Logout", icon: <IconLogout size={20} className="text-red-500" />, variant: "danger" }
     ]

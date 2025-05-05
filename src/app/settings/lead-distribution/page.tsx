@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Button, Input, Table, Skeleton, Alert, Empty, Tag, Spin, Tooltip, Badge, Select } from 'antd';
 import { toast, Toaster } from 'react-hot-toast';
 import { 
@@ -21,6 +21,110 @@ import { useAuth } from '@/context/AuthContext';
 import { fetchRules, LeadDistributionRule } from '@/services/leadDistribution';
 import dayjs from 'dayjs';
 
+function RulesList({ rules, formatDate }: { rules: LeadDistributionRule[]; formatDate: (date: string) => string }) {
+  return (
+    <div className="space-y-4">
+      {rules.map((rule) => (
+        <div 
+          key={rule.id}
+          className="bg-white dark:bg-neutral-800 rounded-xl shadow-md border border-neutral-200 dark:border-neutral-700 \
+            overflow-hidden transition-all duration-300"
+        >
+          <div className="p-4 md:p-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between">
+              <div className="flex-grow">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mr-3">
+                    <IconSettingsAutomation size={20} className="text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-neutral-800 dark:text-white">{rule.name}</h3>
+                    <p className="text-neutral-600 dark:text-neutral-400 text-sm">
+                      Created by {rule.createdBy} on {formatDate(rule.createdAt)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 md:mt-0 flex items-center">
+                <div className="flex items-center mr-6">
+                  <IconUser size={16} className="text-neutral-500 dark:text-neutral-400 mr-1" />
+                  <span className="text-neutral-700 dark:text-neutral-300">Assigned to: {rule.assignedTo}</span>
+                </div>
+                <Button
+                  type="primary"
+                  size="small"
+                  onClick={() => {
+                    toast.success(`Viewing details for rule: ${rule.name}`);
+                  }}
+                >
+                  View Details
+                </Button>
+              </div>
+            </div>
+            {/* Rule details */}
+            <div className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700">
+              <p className="text-neutral-700 dark:text-neutral-300 mb-4">{rule.description}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-24">Lead Source:</span>
+                    <span className="text-neutral-800 dark:text-neutral-200">{rule.leadSource}</span>
+                  </div>
+                  {rule.formField && (
+                    <div className="flex items-center">
+                      <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-24">Form Field:</span>
+                      <span className="text-neutral-800 dark:text-neutral-200">{rule.formField}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-24">Operation:</span>
+                    <span className="text-neutral-800 dark:text-neutral-200">{rule.operation}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-24">Value:</span>
+                    <span className="text-neutral-800 dark:text-neutral-200">{rule.fieldValue}</span>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-24">Company ID:</span>
+                    <span className="text-neutral-800 dark:text-neutral-200">{rule.companyId}</span>
+                  </div>
+                  {rule.isCampaign && (
+                    <div className="flex items-center">
+                      <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-24">Campaign:</span>
+                      <span className="text-neutral-800 dark:text-neutral-200">{rule.campaignName}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* Tags */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Tag color="blue" className="rounded-full px-3 py-1">
+                  Source: {rule.leadSource}
+                </Tag>
+                {rule.formField && (
+                  <Tag color="green" className="rounded-full px-3 py-1">
+                    Field: {rule.formField}
+                  </Tag>
+                )}
+                <Tag color="orange" className="rounded-full px-3 py-1">
+                  Operation: {rule.operation}
+                </Tag>
+                {rule.isCampaign && (
+                  <Tag color="purple" className="rounded-full px-3 py-1">
+                    Campaign: {rule.campaignName}
+                  </Tag>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function LeadDistributionPage() {
   const { user, isAuthenticated, isLoading: authLoading, logout } = useAuth();
   const router = useRouter();
@@ -29,11 +133,17 @@ export default function LeadDistributionPage() {
   // Get the category from URL query parameters
   const [category, setCategory] = useState<string | null>(null);
   
+  const isMountedRef = useRef(true);
+
   useEffect(() => {
+    isMountedRef.current = true;
     // Get the category from URL on client-side
     const params = new URLSearchParams(window.location.search);
     const categoryParam = params.get('category');
     setCategory(categoryParam);
+    return () => {
+      isMountedRef.current = false;
+    };
   }, []);
   
   const [rules, setRules] = useState<LeadDistributionRule[]>([]);
@@ -53,6 +163,7 @@ export default function LeadDistributionPage() {
 
   // Fetch rules data from API
   const getRules = useCallback(async (page = 1, search = '') => {
+    if (!isMountedRef.current) return;
     setLoading(true);
     setError(null);
     
@@ -67,23 +178,29 @@ export default function LeadDistributionPage() {
       console.log('Response from API:', response);
       
       if (response.status && response.code === 200) {
-        setRules(response.data.rules);
-        setPagination({
-          ...pagination,
-          current: page,
-          total: response.data.total,
-        });
+        if (isMountedRef.current) {
+          setRules(response.data.rules);
+          setPagination(prev => ({
+            ...prev,
+            current: page,
+            total: response.data.total,
+          }));
+        }
       } else {
-        setError(response.message || 'Failed to fetch rules');
-        toast.error(response.message || 'Failed to fetch rules');
+        if (isMountedRef.current) {
+          setError(response.message || 'Failed to fetch rules');
+          toast.error(response.message || 'Failed to fetch rules');
+        }
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
-      setError(errorMessage);
-      toast.error(errorMessage);
-      console.error('Error fetching rules:', err);
+      if (isMountedRef.current) {
+        setError(errorMessage);
+        toast.error(errorMessage);
+        console.error('Error fetching rules:', err);
+      }
     } finally {
-      setLoading(false);
+      if (isMountedRef.current) setLoading(false);
     }
   }, [pagination.pageSize]);
 
@@ -119,11 +236,15 @@ export default function LeadDistributionPage() {
 
   // Initial data fetch when component mounts or auth state changes
   useEffect(() => {
+    isMountedRef.current = true;
     if (!authLoading && isAuthenticated) {
       getRules();
     } else if (!authLoading && !isAuthenticated) {
       router.push('/login');
     }
+    return () => {
+      isMountedRef.current = false;
+    };
   }, [authLoading, isAuthenticated, getRules]);
 
   // Show loading state
@@ -273,111 +394,7 @@ export default function LeadDistributionPage() {
                 <p className="ml-4 text-neutral-600 dark:text-neutral-300">Loading rules...</p>
               </div>
             ) : rules.length > 0 ? (
-              <div className="space-y-4">
-                {rules.map((rule) => (
-                  <div 
-                    key={rule.id}
-                    className="bg-white dark:bg-neutral-800 rounded-xl shadow-md border border-neutral-200 dark:border-neutral-700 
-                      overflow-hidden transition-all duration-300"
-                  >
-                    <div className="p-4 md:p-6">
-                      <div className="flex flex-col md:flex-row md:items-center justify-between">
-                        <div className="flex-grow">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mr-3">
-                              <IconSettingsAutomation size={20} className="text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-semibold text-neutral-800 dark:text-white">{rule.name}</h3>
-                              <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-                                Created by {rule.createdBy} on {formatDate(rule.createdAt)}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="mt-4 md:mt-0 flex items-center">
-                          <div className="flex items-center mr-6">
-                            <IconUser size={16} className="text-neutral-500 dark:text-neutral-400 mr-1" />
-                            <span className="text-neutral-700 dark:text-neutral-300">Assigned to: {rule.assignedTo}</span>
-                          </div>
-                          
-                          <Button
-                            type="primary"
-                            size="small"
-                            onClick={() => {
-                              toast.success(`Viewing details for rule: ${rule.name}`);
-                            }}
-                          >
-                            View Details
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Rule details */}
-                      <div className="mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-700">
-                        <p className="text-neutral-700 dark:text-neutral-300 mb-4">{rule.description}</p>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <div className="flex items-center">
-                              <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-24">Lead Source:</span>
-                              <span className="text-neutral-800 dark:text-neutral-200">{rule.leadSource}</span>
-                            </div>
-                            {rule.formField && (
-                              <div className="flex items-center">
-                                <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-24">Form Field:</span>
-                                <span className="text-neutral-800 dark:text-neutral-200">{rule.formField}</span>
-                              </div>
-                            )}
-                            <div className="flex items-center">
-                              <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-24">Operation:</span>
-                              <span className="text-neutral-800 dark:text-neutral-200">{rule.operation}</span>
-                            </div>
-                            <div className="flex items-center">
-                              <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-24">Value:</span>
-                              <span className="text-neutral-800 dark:text-neutral-200">{rule.fieldValue}</span>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <div className="flex items-center">
-                              <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-24">Company ID:</span>
-                              <span className="text-neutral-800 dark:text-neutral-200">{rule.companyId}</span>
-                            </div>
-                            {rule.isCampaign && (
-                              <div className="flex items-center">
-                                <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400 w-24">Campaign:</span>
-                                <span className="text-neutral-800 dark:text-neutral-200">{rule.campaignName}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Tags */}
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          <Tag color="blue" className="rounded-full px-3 py-1">
-                            Source: {rule.leadSource}
-                          </Tag>
-                          {rule.formField && (
-                            <Tag color="green" className="rounded-full px-3 py-1">
-                              Field: {rule.formField}
-                            </Tag>
-                          )}
-                          <Tag color="orange" className="rounded-full px-3 py-1">
-                            Operation: {rule.operation}
-                          </Tag>
-                          {rule.isCampaign && (
-                            <Tag color="purple" className="rounded-full px-3 py-1">
-                              Campaign: {rule.campaignName}
-                            </Tag>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <RulesList rules={rules} formatDate={formatDate} />
             ) : (
               <Empty
                 description="No rules found"

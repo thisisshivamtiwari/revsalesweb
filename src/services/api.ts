@@ -328,3 +328,36 @@ const generateMockData = (dataType: string, count: number): any[] => {
   
   return mockData;
 };
+
+/**
+ * Fetches the current user's details from the backend
+ * @returns Promise with user details response
+ */
+export const getUserDetails = async (): Promise<any> => {
+  try {
+    const token = getAuthToken();
+    if (!token) {
+      return {
+        status: false,
+        code: 401,
+        message: 'Authentication token not found. Please log in again.'
+      };
+    }
+    const response = await fetch(`${BASE_URL}/api/sales/user/getUserDetails`, {
+      method: 'GET',
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    return {
+      status: false,
+      code: 500,
+      message: error instanceof Error ? error.message : 'An unexpected error occurred while fetching user details'
+    };
+  }
+};
