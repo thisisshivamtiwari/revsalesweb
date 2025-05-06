@@ -113,12 +113,21 @@ export default function MyAccountPage() {
               column={1} 
               bordered 
               size="small"
-              className="[&_.ant-descriptions-row]:!border-neutral-300 dark:[&_.ant-descriptions-row]:!border-neutral-700 [&_.ant-descriptions-item-label]:!text-neutral-700 dark:[&_.ant-descriptions-item-label]:!text-neutral-200 [&_.ant-descriptions-item-content]:!text-neutral-800 dark:[&_.ant-descriptions-item-content]:!text-neutral-100"
+              className="custom-descriptions text-neutral-800 dark:text-neutral-200"
+              styles={{ label: { color: 'inherit', fontWeight: 500 }, content: { color: 'inherit' } }}
             >
-              <Descriptions.Item label="Email">{user.email}</Descriptions.Item>
-              <Descriptions.Item label="Phone">{user.phoneNumber}</Descriptions.Item>
-              <Descriptions.Item label="Department">{user.departmentName}</Descriptions.Item>
-              <Descriptions.Item label="Designation">{user.designationName}</Descriptions.Item>
+              <Descriptions.Item label={<span className="text-neutral-700 dark:text-neutral-300">Email</span>}>
+                <span className="text-neutral-800 dark:text-neutral-100">{user.email}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label={<span className="text-neutral-700 dark:text-neutral-300">Phone</span>}>
+                <span className="text-neutral-800 dark:text-neutral-100">{user.phoneNumber}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label={<span className="text-neutral-700 dark:text-neutral-300">Department</span>}>
+                <span className="text-neutral-800 dark:text-neutral-100">{user.departmentName}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label={<span className="text-neutral-700 dark:text-neutral-300">Designation</span>}>
+                <span className="text-neutral-800 dark:text-neutral-100">{user.designationName}</span>
+              </Descriptions.Item>
             </Descriptions>
           </div>
         </main>

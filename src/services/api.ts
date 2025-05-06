@@ -361,3 +361,71 @@ export const getUserDetails = async (): Promise<any> => {
     };
   }
 };
+
+/**
+ * Fetches available form fields for adding a new lead
+ * @returns Promise with form fields response
+ */
+export const getLeadFormFields = async (): Promise<any> => {
+  try {
+    const token = getAuthToken();
+    if (!token) {
+      return {
+        status: false,
+        code: 401,
+        message: 'Authentication token not found. Please log in again.'
+      };
+    }
+    const response = await fetch(`${BASE_URL}/api/sales/lead/getFormFields`, {
+      method: 'GET',
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      }
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching lead form fields:', error);
+    return {
+      status: false,
+      code: 500,
+      message: error instanceof Error ? error.message : 'An unexpected error occurred while fetching form fields'
+    };
+  }
+};
+
+/**
+ * Adds a new lead with the given payload
+ * @param payload - Object with selected fields and their values
+ * @returns Promise with add lead response
+ */
+export const addNewLead = async (payload: Record<string, any>): Promise<any> => {
+  try {
+    const token = getAuthToken();
+    if (!token) {
+      return {
+        status: false,
+        code: 401,
+        message: 'Authentication token not found. Please log in again.'
+      };
+    }
+    const response = await fetch(`${BASE_URL}/api/sales/lead/addNewLead`, {
+      method: 'POST',
+      headers: {
+        'Authorization': token,
+        'Content-Type': 'application/json',
+      }, 
+      body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error adding new lead:', error);
+    return {
+      status: false,
+      code: 500,
+      message: error instanceof Error ? error.message : 'An unexpected error occurred while adding new lead'
+    };
+  }
+};

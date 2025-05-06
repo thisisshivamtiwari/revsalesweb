@@ -91,7 +91,7 @@ const settingsCategories: SettingCategory[] = [
     name: "Data Management",
     icon: <IconLayoutDashboard size={20} />,
     items: [
-      { id: "add-leads", label: "Add Reference Leads", icon: <IconPlus size={20} className="text-blue-500" /> },
+      { id: "add-leads", label: "Add Reference Leads", icon: <IconPlus size={20} className="text-blue-500" />, link: "/settings/add-leads" },
       { id: "export-data", label: "Export Data", icon: <IconUpload size={20} className="text-green-500" />, link: "/settings/export-data?category=data" },
       { id: "packages", label: "Packages", icon: <IconNotes size={20} className="text-teal-500" />, link: "/settings/packages?category=data" }
     ]

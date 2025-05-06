@@ -134,7 +134,7 @@ export default function LeadDistributionPage() {
   const [category, setCategory] = useState<string | null>(null);
   
   const isMountedRef = useRef(true);
-
+  
   useEffect(() => {
     isMountedRef.current = true;
     // Get the category from URL on client-side
@@ -179,25 +179,25 @@ export default function LeadDistributionPage() {
       
       if (response.status && response.code === 200) {
         if (isMountedRef.current) {
-          setRules(response.data.rules);
+        setRules(response.data.rules);
           setPagination(prev => ({
             ...prev,
-            current: page,
-            total: response.data.total,
+          current: page,
+          total: response.data.total,
           }));
         }
       } else {
         if (isMountedRef.current) {
-          setError(response.message || 'Failed to fetch rules');
-          toast.error(response.message || 'Failed to fetch rules');
+        setError(response.message || 'Failed to fetch rules');
+        toast.error(response.message || 'Failed to fetch rules');
         }
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
       if (isMountedRef.current) {
-        setError(errorMessage);
-        toast.error(errorMessage);
-        console.error('Error fetching rules:', err);
+      setError(errorMessage);
+      toast.error(errorMessage);
+      console.error('Error fetching rules:', err);
       }
     } finally {
       if (isMountedRef.current) setLoading(false);
