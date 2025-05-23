@@ -41,6 +41,7 @@ export interface GetTasksParams {
   status?: 'pending' | 'completed';
   startDate?: string;
   endDate?: string;
+  leadId?: string | number;
 }
 
 export const getTasks = async (params: GetTasksParams = {}): Promise<GetTasksResponse> => {
@@ -66,6 +67,7 @@ export const getTasks = async (params: GetTasksParams = {}): Promise<GetTasksRes
     if (params.status) queryParams.append('status', params.status);
     if (params.startDate) queryParams.append('startDate', params.startDate);
     if (params.endDate) queryParams.append('endDate', params.endDate);
+    if (params.leadId) queryParams.append('leadId', params.leadId.toString());
 
     const response = await fetch(
       `${BASE_URL}/api/sales/task/getTasks?${queryParams.toString()}`,
