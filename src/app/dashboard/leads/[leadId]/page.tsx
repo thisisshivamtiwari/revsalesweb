@@ -1,0 +1,74 @@
+"use client";
+
+import { useState } from "react";
+import SidebarDemo from "@/components/ui/sidebar-demo";
+
+const TABS = [
+  { key: "about", label: "About" },
+  { key: "activity", label: "Activity History" },
+  { key: "tasks", label: "Tasks" },
+  { key: "notes", label: "Notes" },
+  { key: "proposals", label: "Proposals" },
+  { key: "audit", label: "Audit Report" },
+  { key: "script", label: "Script Questions" },
+  { key: "calling", label: "Calling Summary" },
+];
+
+export default function LeadDetailsPage({ params }: { params: { leadId: string } }) {
+  const [activeTab, setActiveTab] = useState("about");
+
+  return (
+    <div className="min-h-screen flex flex-row w-full bg-neutral-100 dark:bg-neutral-900">
+      {/* Sidebar */}
+      <SidebarDemo />
+      {/* Main content - with padding to accommodate fixed sidebar */}
+      <div className="flex-1 ml-[90px] lg:ml-[90px] transition-all duration-300">
+        <main className="flex-grow py-8 px-4 md:px-6">
+          <div className="max-w-5xl mx-auto">
+            {/* Lead Summary Header */}
+            <div className="bg-white/40 dark:bg-neutral-800/40 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-neutral-700/30 p-6 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <h1 className="text-2xl font-bold text-neutral-800 dark:text-neutral-100 mb-1">Lead Name</h1>
+                <p className="text-neutral-600 dark:text-neutral-400">lead@email.com • +91-XXXXXXXXXX</p>
+              </div>
+              <div className="flex gap-2">
+                <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 text-sm font-medium">Active</span>
+              </div>
+            </div>
+
+            {/* Sticky Tab Navigation */}
+            <div className="sticky top-0 z-30 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md rounded-xl shadow border border-white/10 dark:border-neutral-700/20 mb-8 flex gap-2 overflow-x-auto p-2">
+              {TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 ${
+                    activeTab === tab.key
+                      ? "bg-blue-600 text-white shadow"
+                      : "bg-white/0 dark:bg-neutral-800/0 text-neutral-700 dark:text-neutral-300 hover:bg-blue-500/10 dark:hover:bg-blue-500/10"
+                  }`}
+                  aria-label={tab.label}
+                  tabIndex={0}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Tab Content */}
+            <div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 dark:border-neutral-700/30 p-6 min-h-[300px]">
+              {activeTab === "about" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">About (Lead details will go here)</div>}
+              {activeTab === "activity" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Activity History (Timeline will go here)</div>}
+              {activeTab === "tasks" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Tasks (Task list will go here)</div>}
+              {activeTab === "notes" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Notes (Notes will go here)</div>}
+              {activeTab === "proposals" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Proposals (Proposals will go here)</div>}
+              {activeTab === "audit" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Audit Report (Audit report will go here)</div>}
+              {activeTab === "script" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Script Questions (Script questions will go here)</div>}
+              {activeTab === "calling" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Calling Summary (Call summary will go here)</div>}
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+} 
