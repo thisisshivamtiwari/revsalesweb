@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { getAuthToken } from '@/services/api';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://rworldbelite.retvenslabs.com';
@@ -19,6 +20,7 @@ export interface Task {
   phoneNumber: string;
   taskTypeName: string;
   meetingID: string;
+  taskType: string;
 }
 
 export interface GetTasksResponse {
@@ -95,5 +97,34 @@ export const getTasks = async (params: GetTasksParams = {}): Promise<GetTasksRes
         tasks: []
       }
     };
+  }
+};
+
+export const completeTask = async (
+  taskId: string,
+  leadId: number,
+  notes?: string
+): Promise<{ status: boolean; message: string }> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.patch(
+      `${BASE_URL}/api/sales/task/updateTask`,
+      {
+        taskId,
+        leadId,
+        status: 'completed',
+        notes,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error completing task:', error);
+    throw error;
   }
 }; 
