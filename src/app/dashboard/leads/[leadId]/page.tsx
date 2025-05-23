@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SidebarDemo from "@/components/ui/sidebar-demo";
+import { AboutTab } from "@/components/lead-details/about-tab";
+import { getLeadDetails, LeadDetails } from "@/services/leads";
 
 const TABS = [
   { key: "about", label: "About" },
@@ -14,8 +16,21 @@ const TABS = [
   { key: "calling", label: "Calling Summary" },
 ];
 
-export default function LeadDetailsPage({ params }: { params: { leadId: string } }) {
+export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: string }> }) {
+  const { leadId } = React.use(params);
   const [activeTab, setActiveTab] = useState("about");
+  const [lead, setLead] = useState<LeadDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    getLeadDetails(leadId)
+      .then((res) => setLead(res.data.lead))
+      .catch(() => setError("Failed to fetch lead details"))
+      .finally(() => setLoading(false));
+  }, [leadId]);
 
   return (
     <div className="min-h-screen flex flex-row w-full bg-neutral-100 dark:bg-neutral-900">
@@ -27,13 +42,24 @@ export default function LeadDetailsPage({ params }: { params: { leadId: string }
           <div className="max-w-5xl mx-auto">
             {/* Lead Summary Header */}
             <div className="bg-white/40 dark:bg-neutral-800/40 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-neutral-700/30 p-6 mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-bold text-neutral-800 dark:text-neutral-100 mb-1">Lead Name</h1>
-                <p className="text-neutral-600 dark:text-neutral-400">lead@email.com • +91-XXXXXXXXXX</p>
-              </div>
-              <div className="flex gap-2">
-                <span className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 text-sm font-medium">Active</span>
-              </div>
+              {loading ? (
+                <div className="flex items-center gap-3 animate-pulse">
+                  <div className="h-8 w-32 bg-neutral-200 dark:bg-neutral-700 rounded" />
+                  <div className="h-5 w-48 bg-neutral-200 dark:bg-neutral-700 rounded" />
+                </div>
+              ) : error || !lead ? (
+                <div className="text-red-500">{error || "No lead data found."}</div>
+              ) : (
+                <>
+                  <div>
+                    <h1 className="text-2xl font-bold text-neutral-800 dark:text-neutral-100 mb-1">{lead.name}</h1>
+                    <p className="text-neutral-600 dark:text-neutral-400">{lead.email} • {lead.phoneNumber}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="px-3 py-1 rounded-full text-sm font-medium border" style={{ backgroundColor: `${lead.color}20`, color: lead.color || '#6b7280', borderColor: `${lead.color}40` }}>{lead.statusName}</span>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Sticky Tab Navigation */}
@@ -57,7 +83,7 @@ export default function LeadDetailsPage({ params }: { params: { leadId: string }
 
             {/* Tab Content */}
             <div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 dark:border-neutral-700/30 p-6 min-h-[300px]">
-              {activeTab === "about" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">About (Lead details will go here)</div>}
+              {activeTab === "about" && <AboutTab leadId={leadId} />}
               {activeTab === "activity" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Activity History (Timeline will go here)</div>}
               {activeTab === "tasks" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Tasks (Task list will go here)</div>}
               {activeTab === "notes" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Notes (Notes will go here)</div>}
