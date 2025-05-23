@@ -5,6 +5,8 @@ import { useAuth } from "@/context/AuthContext";
 import SidebarDemo from "@/components/ui/sidebar-demo";
 import { DashboardNavbar, DashboardNavContent, NavIndicator, NavIndicatorsContainer, NavbarUserMenu } from "@/components/ui/dashboard-navbar";
 import { IconBell, IconCalendarEvent, IconChecklist, IconUsers } from "@tabler/icons-react";
+import { MeetingsSection } from '@/components/dashboard/meetings-section';
+import { TasksSection } from '@/components/dashboard/tasks-section';
 
 export default function Dashboard() {
   const { isAuthenticated, isLoading, user, logout } = useAuth();
@@ -132,6 +134,12 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
+            
+            <MeetingsSection />
+<br/>
+            <TasksSection />
+
+           
             
             <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-lg p-6 md:p-8">
               <h2 className="text-xl md:text-2xl font-bold text-neutral-800 dark:text-neutral-100 mb-6">
