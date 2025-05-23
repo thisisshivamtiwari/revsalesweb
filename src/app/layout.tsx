@@ -8,6 +8,7 @@ import React from 'react';
 import { AuthProvider } from '@/context/AuthContext';
 import AntRegistry from '@/lib/AntRegistry';
 import { ConfigProvider } from "antd";
+import { Toaster } from 'sonner';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,7 +43,10 @@ export default function RootLayout({
           }}
         >
           <AuthProvider>
-            <AntRegistry>{children}</AntRegistry>
+            <AntRegistry>
+              {children}
+              <Toaster richColors position="top-right" />
+            </AntRegistry>
           </AuthProvider>
         </ConfigProvider>
       </body>
