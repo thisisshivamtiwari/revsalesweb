@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import { IconUsers, IconSearch, IconChevronLeft, IconChevronRight, IconUser, IconPhone, IconCalendar, IconMapPin } from '@tabler/icons-react';
 import { toast } from 'sonner';
@@ -16,6 +17,7 @@ export const LeadsSection = () => {
     total: 0,
     pageSize: 10
   });
+  const router = useRouter();
 
   const fetchLeads = async () => {
     try {
@@ -64,6 +66,10 @@ export const LeadsSection = () => {
       ...prev,
       current: direction === 'prev' ? Math.max(1, prev.current - 1) : Math.min(Math.ceil(prev.total / prev.pageSize), prev.current + 1)
     }));
+  };
+
+  const handleLeadClick = (lead: Lead) => {
+    router.push(`/dashboard/leads/${lead.leadId}?name=${encodeURIComponent(lead.name || '')}`);
   };
 
   const filteredLeads = leads.filter((lead) =>
@@ -138,7 +144,11 @@ export const LeadsSection = () => {
             {filteredLeads.map((lead) => (
               <div
                 key={lead.leadId}
-                className="group relative bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-all duration-300 overflow-hidden"
+                className="group relative bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-all duration-300 overflow-hidden cursor-pointer"
+                onClick={() => handleLeadClick(lead)}
+                tabIndex={0}
+                aria-label={`View details for ${lead.name}`}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleLeadClick(lead); }}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative p-6">
