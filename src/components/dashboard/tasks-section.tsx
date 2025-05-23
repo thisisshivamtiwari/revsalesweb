@@ -90,6 +90,10 @@ export const TasksSection = () => {
     }
   };
 
+  const handleTaskCompleted = () => {
+    fetchTasks();
+  };
+
   return (
     <div className="bg-white/40 dark:bg-neutral-800/40 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-neutral-700/30 p-6 md:p-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -243,6 +247,7 @@ export const TasksSection = () => {
           isOpen={!!selectedTask}
           onClose={() => setSelectedTask(null)}
           task={selectedTask}
+          onTaskCompleted={handleTaskCompleted}
         />
       )}
     </div>
