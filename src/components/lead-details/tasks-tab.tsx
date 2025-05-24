@@ -10,6 +10,7 @@ import { CallFollowUpTaskOptionsModal } from '@/components/ui/call-followup-task
 import { useRouter } from 'next/navigation';
 import { completeTask } from '@/services/tasks';
 import { AddNoteModal } from '@/components/lead-details/add-note-modal';
+import { AddAuditModal } from '@/components/lead-details/add-audit-modal';
 
 interface TasksTabProps {
   leadId: string | number;
@@ -42,6 +43,8 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
   const router = useRouter();
   const [showAddNoteModal, setShowAddNoteModal] = useState(false);
   const [addNoteTask, setAddNoteTask] = useState<Task | null>(null);
+  const [showAuditModal, setShowAuditModal] = useState(false);
+  const [auditTask, setAuditTask] = useState<Task | null>(null);
 
   const fetchTasks = async (page = currentPage) => {
     try {
@@ -154,6 +157,11 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
     }
   };
 
+  const openAuditModal = (task: Task) => {
+    setAuditTask(task);
+    setShowAuditModal(true);
+  };
+
   // Handler for Mark as Complete
   const handleMarkComplete = async () => {
     if (!optionsTask) return;
@@ -247,11 +255,11 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
             {tasks.map((task) => (
               <div
                 key={task.id}
-                onClick={() => handleTaskCardClick(task, { openModal })}
+                onClick={() => handleTaskCardClick(task, { openAuditModal, openModal })}
                 className="group relative bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-all duration-300 overflow-hidden cursor-pointer"
                 tabIndex={0}
                 aria-label={`View task: ${task.title}`}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleTaskCardClick(task, { openModal }); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleTaskCardClick(task, { openAuditModal, openModal }); }}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative p-6">
@@ -465,6 +473,24 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
           fetchTasks(currentPage);
         }}
       />
+      {showAuditModal && auditTask && (
+        <AddAuditModal
+          isOpen={showAuditModal}
+          onClose={() => { setShowAuditModal(false); setAuditTask(null); }}
+          leadId={auditTask.leadId}
+          onAuditAdded={async () => {
+            try {
+              await completeTask(auditTask.id, auditTask.leadId);
+              toast.success('Audit added and task completed successfully');
+              setShowAuditModal(false);
+              setAuditTask(null);
+              fetchTasks();
+            } catch (err) {
+              toast.error('Failed to complete task after audit');
+            }
+          }}
+        />
+      )}
     </div>
   );
 }; 
