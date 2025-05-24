@@ -11,7 +11,7 @@ import AuditTab from "@/components/lead-details/audit-tab";
 import ScriptQuestionsTab from "@/components/lead-details/script-questions-tab";
 import CallingSummaryTab from "@/components/lead-details/calling-summary-tab";
 import ChatTab from "@/components/lead-details/chat-tab";
-import { getLeadDetails, LeadDetails } from "@/services/leads";
+import { getLeadDetails, getLeadStatuses, updateLeadStatus, LeadDetails, LeadStatus } from "@/services/leads";
 
 const TABS = [
   { key: "about", label: "About" },
@@ -31,6 +31,13 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
   const [lead, setLead] = useState<LeadDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Status modal state
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
+  const [statuses, setStatuses] = useState<LeadStatus[]>([]);
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [statusError, setStatusError] = useState<string | null>(null);
+  const [statusUpdating, setStatusUpdating] = useState(false);
+  const [statusUpdateError, setStatusUpdateError] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -40,6 +47,43 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
       .catch(() => setError("Failed to fetch lead details"))
       .finally(() => setLoading(false));
   }, [leadId]);
+
+  const handleOpenStatusModal = async () => {
+    setStatusModalOpen(true);
+    setStatusLoading(true);
+    setStatusError(null);
+    try {
+      const res = await getLeadStatuses();
+      if (res.status && res.code === 200) {
+        setStatuses(res.data.status);
+      } else {
+        setStatusError(res.message || "Failed to fetch statuses");
+      }
+    } catch (err) {
+      setStatusError("Failed to fetch statuses");
+    } finally {
+      setStatusLoading(false);
+    }
+  };
+
+  const handleSelectStatus = async (statusId: string, color: string, name: string) => {
+    if (!lead) return;
+    setStatusUpdating(true);
+    setStatusUpdateError(null);
+    try {
+      const res = await updateLeadStatus(lead.leadId, statusId);
+      if (res.status && res.code === 200) {
+        setLead({ ...lead, status: statusId, statusName: name, color });
+        setStatusModalOpen(false);
+      } else {
+        setStatusUpdateError(res.message || "Failed to update status");
+      }
+    } catch (err) {
+      setStatusUpdateError("Failed to update status");
+    } finally {
+      setStatusUpdating(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-row w-full bg-neutral-100 dark:bg-neutral-900">
@@ -65,7 +109,17 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
                     <p className="text-neutral-600 dark:text-neutral-400">{lead.email} • {lead.phoneNumber}</p>
                   </div>
                   <div className="flex gap-2">
-                    <span className="px-3 py-1 rounded-full text-sm font-medium border" style={{ backgroundColor: `${lead.color}20`, color: lead.color || '#6b7280', borderColor: `${lead.color}40` }}>{lead.statusName}</span>
+                    <span
+                      className="px-3 py-1 rounded-full text-sm font-medium border cursor-pointer transition-all duration-150 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      style={{ backgroundColor: `${lead.color}20`, color: lead.color || '#6b7280', borderColor: `${lead.color}40` }}
+                      tabIndex={0}
+                      role="button"
+                      aria-label="Change lead status"
+                      onClick={handleOpenStatusModal}
+                      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleOpenStatusModal(); }}
+                    >
+                      {lead.statusName}
+                    </span>
                   </div>
                 </>
               )}
@@ -115,6 +169,47 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
           </div>
         </main>
       </div>
+
+      {/* Status Modal */}
+      {statusModalOpen && lead && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl p-6 w-full max-w-md relative">
+            <button
+              className="absolute top-3 right-3 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 text-xl font-bold focus:outline-none"
+              onClick={() => setStatusModalOpen(false)}
+              aria-label="Close status modal"
+            >
+              ×
+            </button>
+            <h2 className="text-lg font-bold mb-4 text-neutral-800 dark:text-neutral-100">Select Lead Status</h2>
+            {statusLoading ? (
+              <div className="flex justify-center items-center h-24">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              </div>
+            ) : statusError ? (
+              <div className="text-red-500 text-center py-4">{statusError}</div>
+            ) : (
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {statuses.map((s) => (
+                  <button
+                    key={s.id}
+                    className="w-full flex items-center gap-3 px-4 py-2 rounded-lg border border-neutral-200 dark:border-neutral-700 transition-all hover:bg-blue-50 dark:hover:bg-blue-900/30 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    style={{ backgroundColor: `${s.color}10`, color: s.color, borderColor: `${s.color}40` }}
+                    onClick={() => handleSelectStatus(s.id, s.color, s.name)}
+                    disabled={statusUpdating}
+                    aria-label={`Set status to ${s.name}`}
+                  >
+                    <span className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: s.color, display: 'inline-block' }}></span>
+                    <span className="flex-1 text-left">{s.name}</span>
+                    {lead.status === s.id && <span className="ml-2 text-xs text-blue-600 font-semibold">Current</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+            {statusUpdateError && <div className="text-red-500 text-center mt-3">{statusUpdateError}</div>}
+          </div>
+        </div>
+      )}
     </div>
   );
 } 

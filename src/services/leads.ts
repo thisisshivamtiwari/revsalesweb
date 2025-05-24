@@ -446,6 +446,73 @@ export const getLeadCallSummary = async (
   }
 };
 
+// Fetch all lead statuses
+export interface LeadStatus {
+  id: string;
+  name: string;
+  color: string;
+  isAssginedToNewLead: boolean;
+  isFinalStatus: boolean;
+  isProposal: boolean;
+}
+export interface GetLeadStatusesResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: {
+    total: number;
+    limit: number;
+    offset: number;
+    status: LeadStatus[];
+  };
+}
+export const getLeadStatuses = async (limit = 20, pageNumber = 1, search = ""): Promise<GetLeadStatusesResponse> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.get<GetLeadStatusesResponse>(
+      `${BASE_URL}/sales/lead/getLeadStatus`,
+      {
+        params: { limit, pageNumber, search },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching lead statuses:', error);
+    throw error;
+  }
+};
+
+// Update lead status
+export interface UpdateLeadStatusResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: any;
+}
+export const updateLeadStatus = async (leadId: string | number, status: string): Promise<UpdateLeadStatusResponse> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.patch<UpdateLeadStatusResponse>(
+      `${BASE_URL}/sales/lead/updateLeadDetails`,
+      { leadId, status },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error updating lead status:', error);
+    throw error;
+  }
+};
+
 
 
 
