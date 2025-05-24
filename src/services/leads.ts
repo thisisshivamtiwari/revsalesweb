@@ -303,6 +303,55 @@ export const getLeadAudit = async (leadId: string | number): Promise<GetLeadAudi
     console.error('Error fetching lead audit:', error);
     throw error;
   }
+};
+
+export interface ScriptQuestion {
+  id: string;
+  questionNumber: number;
+  question: string;
+  answer: string;
+}
+
+export interface ScriptStep {
+  id: string;
+  name: string;
+  stepNumber: number;
+  questions: ScriptQuestion[];
+}
+
+export interface ScriptWizard {
+  id: string;
+  name: string;
+  steps: ScriptStep[];
+}
+
+export interface GetScriptQuestionsResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: {
+    wizard: ScriptWizard;
+  };
+}
+
+export const getLeadScriptQuestions = async (leadId: string | number): Promise<GetScriptQuestionsResponse> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.get<GetScriptQuestionsResponse>(
+      `${BASE_URL}/sales/lead/wizard/getWizardDetails`,
+      {
+        params: { leadId },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching script questions:', error);
+    throw error;
+  }
 }; 
 
 

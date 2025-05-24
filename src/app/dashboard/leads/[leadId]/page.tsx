@@ -8,6 +8,7 @@ import { TasksTab } from "@/components/lead-details/tasks-tab";
 import { NotesTab } from "@/components/lead-details/notes-tab";
 import { ProposalsTab } from "@/components/lead-details/proposals-tab";
 import AuditTab from "@/components/lead-details/audit-tab";
+import ScriptQuestionsTab from "@/components/lead-details/script-questions-tab";
 import { getLeadDetails, LeadDetails } from "@/services/leads";
 
 const TABS = [
@@ -94,7 +95,7 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
               {activeTab === "notes" && <NotesTab leadId={leadId} />}
               {activeTab === "proposals" && <ProposalsTab leadId={leadId} />}
               {activeTab === "audit" && <AuditTab leadId={leadId} />}
-              {activeTab === "script" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Script Questions (Script questions will go here)</div>}
+              {activeTab === "script" && <ScriptQuestionsTab leadId={leadId} />}
               {activeTab === "calling" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Calling Summary (Call summary will go here)</div>}
             </div>
           </div>
