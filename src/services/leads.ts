@@ -513,6 +513,48 @@ export const updateLeadStatus = async (leadId: string | number, status: string):
   }
 };
 
+export interface AddNotePayload {
+  notes: {
+    leadId: number;
+    title: string;
+    description: string;
+  }[];
+}
+
+export interface AddNoteResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: {
+    alreadyExistNotes: any[];
+    addedNotes: {
+      leadId: number;
+      title: string;
+      description: string;
+    }[];
+  };
+}
+
+export const addLeadNotes = async (payload: AddNotePayload): Promise<AddNoteResponse> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.post<AddNoteResponse>(
+      `${BASE_URL}/sales/lead/notes/addNotes`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error adding lead notes:', error);
+    throw error;
+  }
+};
+
 
 
 
