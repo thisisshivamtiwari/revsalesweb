@@ -10,6 +10,7 @@ import { ProposalsTab } from "@/components/lead-details/proposals-tab";
 import AuditTab from "@/components/lead-details/audit-tab";
 import ScriptQuestionsTab from "@/components/lead-details/script-questions-tab";
 import CallingSummaryTab from "@/components/lead-details/calling-summary-tab";
+import ChatTab from "@/components/lead-details/chat-tab";
 import { getLeadDetails, LeadDetails } from "@/services/leads";
 
 const TABS = [
@@ -20,6 +21,7 @@ const TABS = [
   { key: "proposals", label: "Proposals" },
   { key: "audit", label: "Audit Report" },
   { key: "script", label: "Script Questions" },
+  { key: "chat", label: "Chat" },
   { key: "calling", label: "Calling Summary" },
 ];
 
@@ -97,6 +99,7 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
               {activeTab === "proposals" && <ProposalsTab leadId={leadId} />}
               {activeTab === "audit" && <AuditTab leadId={leadId} />}
               {activeTab === "script" && <ScriptQuestionsTab leadId={leadId} />}
+              {activeTab === "chat" && <ChatTab leadId={leadId} />}
               {activeTab === "calling" && (
                 loading || !lead ? (
                   <div className="flex justify-center items-center h-40">
