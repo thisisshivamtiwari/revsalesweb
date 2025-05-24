@@ -1,13 +1,22 @@
 import { toast } from 'sonner';
 
-// context: { openModal: (task) => void }
-export const handleTaskCardClick = (task: any, context: { openModal: (task: any) => void }) => {
+// context: { openAuditModal?: (task) => void, openModal?: (task) => void }
+export const handleTaskCardClick = (
+  task: any,
+  context: {
+    openAuditModal?: (task: any) => void;
+    openModal?: (task: any) => void;
+    // ...other modals as needed
+  }
+) => {
   const type = (task.taskTypeName || '').toLowerCase();
-  if (type === 'call' || type === 'follow-up') {
-    // Always open the options modal for call and follow-up
+  if (type === 'audit' && context.openAuditModal) {
+    context.openAuditModal(task);
+    return;
+  }
+  if ((type === 'call' || type === 'follow-up') && context.openModal) {
     context.openModal(task);
     return;
   }
-  // For all other types, show under development toast
-  toast.info('Under development');
+  toast.info('This functionality is under development');
 }; 
