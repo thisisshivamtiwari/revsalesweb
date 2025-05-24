@@ -569,14 +569,14 @@ export const addLeadAudit = async (
   payload: AddAuditPayload
 ): Promise<AddAuditResponse> => {
   try {
-    const token = localStorage.getItem('token');
+    const token = getAuthToken();
     const response = await axios.post(
       `${BASE_URL}/sales/lead/audit/addAudit`,
       payload,
       {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: token ? `${token}` : '',
+          Authorization: token,
         },
       }
     );
