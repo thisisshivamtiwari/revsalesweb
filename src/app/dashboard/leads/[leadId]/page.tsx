@@ -7,7 +7,7 @@ import { ActivityHistoryTab } from "@/components/lead-details/activity-history-t
 import { TasksTab } from "@/components/lead-details/tasks-tab";
 import { NotesTab } from "@/components/lead-details/notes-tab";
 import { ProposalsTab } from "@/components/lead-details/proposals-tab";
-import { AuditTab } from "@/components/lead-details/audit-tab";
+import AuditTab from "@/components/lead-details/audit-tab";
 import { getLeadDetails, LeadDetails } from "@/services/leads";
 
 const TABS = [
