@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from "react";
 import SidebarDemo from "@/components/ui/sidebar-demo";
 import { AboutTab } from "@/components/lead-details/about-tab";
+import { ActivityHistoryTab } from "@/components/lead-details/activity-history-tab";
+import { TasksTab } from "@/components/lead-details/tasks-tab";
+import { NotesTab } from "@/components/lead-details/notes-tab";
 import { getLeadDetails, LeadDetails } from "@/services/leads";
 
 const TABS = [
@@ -84,9 +87,9 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
             {/* Tab Content */}
             <div className="bg-white/60 dark:bg-neutral-800/60 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 dark:border-neutral-700/30 p-6 min-h-[300px]">
               {activeTab === "about" && <AboutTab leadId={leadId} />}
-              {activeTab === "activity" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Activity History (Timeline will go here)</div>}
-              {activeTab === "tasks" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Tasks (Task list will go here)</div>}
-              {activeTab === "notes" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Notes (Notes will go here)</div>}
+              {activeTab === "activity" && <ActivityHistoryTab leadId={leadId} />}
+              {activeTab === "tasks" && <TasksTab leadId={leadId} />}
+              {activeTab === "notes" && <NotesTab leadId={leadId} />}
               {activeTab === "proposals" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Proposals (Proposals will go here)</div>}
               {activeTab === "audit" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Audit Report (Audit report will go here)</div>}
               {activeTab === "script" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Script Questions (Script questions will go here)</div>}
