@@ -30,11 +30,11 @@ export const TaskActionModal = ({ isOpen, onClose, task, onTaskCompleted }: Task
       case 'audit':
         router.push(`/complete-audit?leadId=${task.leadId}&taskId=${task.id}`);
         break;
-      case 'meeting':
-      case 'intro meeting':
-        router.push(`/create-meeting?leadId=${task.leadId}&taskId=${task.id}`);
-        break;
       default:
+        if (task.taskTypeName.toLowerCase() === 'meeting' || task.taskTypeName.toLowerCase() === 'intro meeting') {
+          toast.info('Meeting functionality is under development');
+          break;
+        }
         await handleCompleteTask();
     }
   };
@@ -116,7 +116,7 @@ export const TaskActionModal = ({ isOpen, onClose, task, onTaskCompleted }: Task
               )}
               {task.taskTypeName.toLowerCase() === 'proposal' ? 'Create Proposal' :
                 task.taskTypeName.toLowerCase() === 'audit' ? 'Complete Audit' :
-                task.taskTypeName.toLowerCase() === 'meeting' || task.taskTypeName.toLowerCase() === 'intro meeting' ? 'Schedule Meeting' :
+                (task.taskTypeName.toLowerCase() === 'meeting' || task.taskTypeName.toLowerCase() === 'intro meeting') ? 'Schedule Meeting' :
                 'Complete Task'}
             </button>
           )}
