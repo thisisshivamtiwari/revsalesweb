@@ -129,4 +129,117 @@ export const completeTask = async (
     console.error('Error completing task:', error);
     throw error;
   }
+};
+
+// Fetch all task types
+export interface TaskType {
+  id: string;
+  name: string;
+}
+export interface GetTaskTypesResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: {
+    total: number;
+    limit: number;
+    offset: number;
+    taskType: TaskType[];
+  };
+}
+export const getTaskTypes = async (limit = 100, pageNumber = 1, search = ""): Promise<GetTaskTypesResponse> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.get<GetTaskTypesResponse>(
+      `${BASE_URL}/api/sales/task/getTaskType`,
+      {
+        params: { limit, pageNumber, search },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching task types:', error);
+    throw error;
+  }
+};
+
+// Create a new task
+export interface CreateTaskPayload {
+  title: string;
+  taskTypeId: string;
+  deadline: string;
+  priority: string;
+  description: string;
+  assignedTo: string;
+  leadId: string | number;
+  createdFor: string;
+}
+export interface CreateTaskResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: any;
+}
+export const createTask = async (payload: CreateTaskPayload): Promise<CreateTaskResponse> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.post<CreateTaskResponse>(
+      `${BASE_URL}/api/sales/task/addTask`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error creating task:', error);
+    throw error;
+  }
+};
+
+// Fetch all team members
+export interface Member {
+  id: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  profileImg: string;
+  designationName: string;
+}
+export interface GetMembersResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: {
+    total: number;
+    limit: number;
+    offset: number;
+    members: Member[];
+  };
+}
+export const getMembers = async (pageNumber = 1, limit = 100, search = "", id = ""): Promise<GetMembersResponse> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.get<GetMembersResponse>(
+      `${BASE_URL}/api/sales/team/getMembers`,
+      {
+        params: { pageNumber, limit, search, id },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching members:', error);
+    throw error;
+  }
 }; 

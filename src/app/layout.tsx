@@ -46,6 +46,7 @@ export default function RootLayout({
             <AntRegistry>
               {children}
               <Toaster richColors position="top-right" />
+              <div id="modal-root" />
             </AntRegistry>
           </AuthProvider>
         </ConfigProvider>
