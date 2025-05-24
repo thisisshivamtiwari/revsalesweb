@@ -6,6 +6,10 @@ import { toast } from 'sonner';
 import { TaskActionModal } from '@/components/ui/task-action-modal';
 import { ModalPortal } from '@/components/ui/ModalPortal';
 import { handleTaskCardClick } from '@/utils/task-action-handler';
+import { CallFollowUpTaskOptionsModal } from '@/components/ui/call-followup-task-options-modal';
+import { useRouter } from 'next/navigation';
+import { completeTask } from '@/services/tasks';
+import { AddNoteModal } from '@/components/lead-details/add-note-modal';
 
 interface TasksTabProps {
   leadId: string | number;
@@ -33,6 +37,11 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
     createdFor: '',
   });
   const [members, setMembers] = useState<Member[]>([]);
+  const [showOptionsModal, setShowOptionsModal] = useState(false);
+  const [optionsTask, setOptionsTask] = useState<Task | null>(null);
+  const router = useRouter();
+  const [showAddNoteModal, setShowAddNoteModal] = useState(false);
+  const [addNoteTask, setAddNoteTask] = useState<Task | null>(null);
 
   const fetchTasks = async (page = currentPage) => {
     try {
@@ -134,6 +143,52 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
     }
   };
 
+  // Custom openModal for handler
+  const openModal = (task: Task) => {
+    const type = (task.taskTypeName || '').toLowerCase();
+    if (type === 'call' || type === 'follow-up') {
+      setOptionsTask(task);
+      setShowOptionsModal(true);
+    } else {
+      setSelectedTask(task);
+    }
+  };
+
+  // Handler for Mark as Complete
+  const handleMarkComplete = async () => {
+    if (!optionsTask) return;
+    try {
+      await completeTask(optionsTask.id, optionsTask.leadId);
+      toast.success('Task marked as complete');
+      setShowOptionsModal(false);
+      setOptionsTask(null);
+      fetchTasks(currentPage);
+    } catch (err) {
+      toast.error('Failed to mark task as complete');
+    }
+  };
+
+  // Handler for Add Notes
+  const handleAddNotes = () => {
+    setAddNoteTask(optionsTask);
+    setShowAddNoteModal(true);
+    setShowOptionsModal(false);
+  };
+
+  // Handler for Create Followup Task
+  const handleCreateFollowupTask = () => {
+    setShowOptionsModal(false);
+    handleOpenCreateModal();
+  };
+
+  // Handler for View Lead
+  const handleViewLead = () => {
+    if (optionsTask) {
+      router.push(`/dashboard/leads/${optionsTask.leadId}`);
+      setShowOptionsModal(false);
+    }
+  };
+
   return (
     <div className="bg-white/40 dark:bg-neutral-800/40 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-neutral-700/30 p-4 md:p-6 relative">
       <div className="flex items-center space-x-3 mb-6">
@@ -192,11 +247,11 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
             {tasks.map((task) => (
               <div
                 key={task.id}
-                onClick={() => handleTaskCardClick(task, { openModal: setSelectedTask })}
+                onClick={() => handleTaskCardClick(task, { openModal })}
                 className="group relative bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-all duration-300 overflow-hidden cursor-pointer"
                 tabIndex={0}
                 aria-label={`View task: ${task.title}`}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleTaskCardClick(task, { openModal: setSelectedTask }); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleTaskCardClick(task, { openModal }); }}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative p-6">
@@ -390,6 +445,26 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
           </div>
         </ModalPortal>
       )}
+      {/* Options Modal for Call/Follow-Up */}
+      <CallFollowUpTaskOptionsModal
+        isOpen={showOptionsModal}
+        onClose={() => { setShowOptionsModal(false); setOptionsTask(null); }}
+        task={optionsTask}
+        onViewLead={handleViewLead}
+        onCreateFollowupTask={handleCreateFollowupTask}
+        onAddNotes={handleAddNotes}
+        onMarkComplete={handleMarkComplete}
+      />
+      {/* Add Note Modal (reuse your existing modal) */}
+      <AddNoteModal
+        isOpen={showAddNoteModal}
+        onClose={() => setShowAddNoteModal(false)}
+        leadId={Number(addNoteTask?.leadId || leadId)}
+        onNoteAdded={() => {
+          setShowAddNoteModal(false);
+          fetchTasks(currentPage);
+        }}
+      />
     </div>
   );
 }; 
