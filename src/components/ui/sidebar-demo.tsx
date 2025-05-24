@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Sidebar,
   SidebarLogo,
@@ -36,6 +36,7 @@ const ButtonWrapper = ({ children, isExpanded, className }: ButtonWrapperProps) 
 // Dashboard Sidebar Demo Component
 export default function SidebarDemo() {
   const pathname = usePathname();
+  const router = useRouter();
   
   // Define navigation items
   const mainNavItems = [
@@ -88,6 +89,16 @@ export default function SidebarDemo() {
   // The actual isExpanded state is managed by the Sidebar component
   const dummyExpanded = true; // Set to true to ensure text renders initially
 
+  // Logout handler
+  const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("user_data");
+      // Add any other cleanup if needed
+      router.push("/login");
+    }
+  };
+
   return (
     <Sidebar className="py-4">
       <SidebarLogo isExpanded={dummyExpanded} />
@@ -122,7 +133,7 @@ export default function SidebarDemo() {
         <SidebarButton
           variant="gradient"
           icon={<IconLogout className="w-5 h-5" />}
-          href="/logout"
+          onClick={handleLogout}
           isExpanded={dummyExpanded}
         >
           Logout
