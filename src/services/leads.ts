@@ -400,7 +400,51 @@ export const addOrUpdateScriptAnswers = async (
     console.error('Error adding/updating script answers:', error);
     throw error;
   }
-}; 
+};
+
+// Call Summary Types and API
+export interface LeadCallSummaryItem {
+  phoneNumber: string;
+  callType: string;
+  leadName: string;
+  userName: string;
+  count: number;
+  duration: string;
+}
+export interface GetLeadCallSummaryResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: {
+    total: number;
+    limit: number;
+    offset: number;
+    calls: LeadCallSummaryItem[];
+  };
+}
+export const getLeadCallSummary = async (
+  phoneNumber: string,
+  limit: number = 5,
+  pageNumber: number = 1
+): Promise<GetLeadCallSummaryResponse> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.get<GetLeadCallSummaryResponse>(
+      `${BASE_URL}/sales/lead/call/getCallDetails`,
+      {
+        params: { phoneNumber, limit, pageNumber },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching call summary:', error);
+    throw error;
+  }
+};
 
 
 

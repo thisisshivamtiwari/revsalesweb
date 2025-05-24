@@ -9,6 +9,7 @@ import { NotesTab } from "@/components/lead-details/notes-tab";
 import { ProposalsTab } from "@/components/lead-details/proposals-tab";
 import AuditTab from "@/components/lead-details/audit-tab";
 import ScriptQuestionsTab from "@/components/lead-details/script-questions-tab";
+import CallingSummaryTab from "@/components/lead-details/calling-summary-tab";
 import { getLeadDetails, LeadDetails } from "@/services/leads";
 
 const TABS = [
@@ -96,7 +97,15 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
               {activeTab === "proposals" && <ProposalsTab leadId={leadId} />}
               {activeTab === "audit" && <AuditTab leadId={leadId} />}
               {activeTab === "script" && <ScriptQuestionsTab leadId={leadId} />}
-              {activeTab === "calling" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Calling Summary (Call summary will go here)</div>}
+              {activeTab === "calling" && (
+                loading || !lead ? (
+                  <div className="flex justify-center items-center h-40">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500"></div>
+                  </div>
+                ) : (
+                  <CallingSummaryTab phoneNumber={lead.phoneNumber} />
+                )
+              )}
             </div>
           </div>
         </main>
