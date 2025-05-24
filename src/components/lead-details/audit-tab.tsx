@@ -98,4 +98,6 @@ export const AuditTab = ({ leadId }: AuditTabProps) => {
       )}
     </div>
   );
-}; 
+};
+
+export default AuditTab; 
