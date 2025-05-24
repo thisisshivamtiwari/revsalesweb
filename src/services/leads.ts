@@ -244,15 +244,23 @@ export const getLeadQuotations = async (
   search: string = ""
 ): Promise<QuotationsResponse> => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/sales/quotation/getQuotation?limit=${limit}&pageNumber=${page}&search=${search}&leadId=${leadId}`,
+    const token = getAuthToken();
+    const response = await axios.get<QuotationsResponse>(
+      `${BASE_URL}/sales/quotation/getQuotation`,
       {
+        params: {
+          limit,
+          pageNumber: page,
+          search,
+          leadId,
+        },
         headers: {
-          Authorization: `${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+          Authorization: token,
         },
       }
     );
-    return await response.json();
+    return response.data;
   } catch (error) {
     console.error("Error fetching lead quotations:", error);
     throw error;
