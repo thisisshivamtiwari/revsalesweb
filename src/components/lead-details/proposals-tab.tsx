@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getLeadQuotations, Quotation } from '@/services/leads';
-import { IconFileText, IconUser, IconCalendar, IconChevronLeft, IconChevronRight, IconCurrencyRupee } from '@tabler/icons-react';
+import { IconFileText, IconUser, IconCalendar, IconChevronLeft, IconChevronRight, IconCurrencyDollar } from '@tabler/icons-react';
 import { format } from 'date-fns';
 
 interface ProposalsTabProps {
@@ -45,6 +45,15 @@ export const ProposalsTab = ({ leadId }: ProposalsTabProps) => {
   }, [currentPage]);
 
   const totalPages = Math.max(1, Math.ceil(totalQuotations / pageSize));
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
 
   return (
     <div className="bg-white/40 dark:bg-neutral-800/40 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-neutral-700/30 p-4 md:p-6">
@@ -106,24 +115,26 @@ export const ProposalsTab = ({ leadId }: ProposalsTabProps) => {
                 key={quotation.id}
                 className="group relative bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 hover:border-green-500/50 dark:hover:border-green-500/50 transition-all duration-300 overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative p-6">
-                  <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-100 line-clamp-2">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-100">
                       {quotation.name}
                     </h3>
-                    <span className="flex items-center gap-1 text-xs text-neutral-400 dark:text-neutral-500">
+                    <div className="flex items-center gap-1 text-sm font-medium text-green-600 dark:text-green-400">
+                      <IconCurrencyDollar className="w-4 h-4" />
+                      {formatCurrency(quotation.total)}
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
                       <IconUser className="w-4 h-4" />
-                      {quotation.createdByName}
-                    </span>
-                  </div>
-                  <div className="mb-2 flex items-center gap-2 text-neutral-700 dark:text-neutral-200">
-                    <IconCurrencyRupee className="w-4 h-4" />
-                    <span className="font-medium">{quotation.total.toLocaleString()}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
-                    <IconCalendar className="w-4 h-4" />
-                    {format(new Date(quotation.createdAt), 'PP, p')}
+                      <span>{quotation.createdByName}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+                      <IconCalendar className="w-4 h-4" />
+                      <span>{format(new Date(quotation.createdAt), 'PP, p')}</span>
+                    </div>
                   </div>
                 </div>
               </div>
