@@ -6,6 +6,7 @@ import { AboutTab } from "@/components/lead-details/about-tab";
 import { ActivityHistoryTab } from "@/components/lead-details/activity-history-tab";
 import { TasksTab } from "@/components/lead-details/tasks-tab";
 import { NotesTab } from "@/components/lead-details/notes-tab";
+import { ProposalsTab } from "@/components/lead-details/proposals-tab";
 import { getLeadDetails, LeadDetails } from "@/services/leads";
 
 const TABS = [
@@ -90,7 +91,7 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
               {activeTab === "activity" && <ActivityHistoryTab leadId={leadId} />}
               {activeTab === "tasks" && <TasksTab leadId={leadId} />}
               {activeTab === "notes" && <NotesTab leadId={leadId} />}
-              {activeTab === "proposals" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Proposals (Proposals will go here)</div>}
+              {activeTab === "proposals" && <ProposalsTab leadId={leadId} />}
               {activeTab === "audit" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Audit Report (Audit report will go here)</div>}
               {activeTab === "script" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Script Questions (Script questions will go here)</div>}
               {activeTab === "calling" && <div className="text-lg font-semibold text-neutral-700 dark:text-neutral-200">Calling Summary (Call summary will go here)</div>}

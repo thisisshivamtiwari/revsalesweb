@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { getAuthToken } from './api';
+import { api } from "@/lib/api";
+import { ApiResponse } from "@/types/api";
 
 const BASE_URL = 'https://rworldbelite.retvenslabs.com/api';
 
@@ -212,6 +214,44 @@ export const getLeadNotes = async (leadId: string | number, pageNumber = 1, limi
     return response.data;
   } catch (error) {
     console.error('Error fetching lead notes:', error);
+    throw error;
+  }
+};
+
+export interface Quotation {
+  id: string;
+  name: string;
+  total: number;
+  createdBy: string;
+  createdByName: string;
+  createdAt: string;
+}
+
+export interface QuotationsResponse {
+  total: number;
+  limit: number;
+  offset: number;
+  quotations: Quotation[];
+}
+
+export const getLeadQuotations = async (
+  leadId: string | number,
+  page: number = 1,
+  limit: number = 3,
+  search: string = ""
+): Promise<ApiResponse<QuotationsResponse>> => {
+  try {
+    const response = await api.get(`/sales/quotation/getQuotation`, {
+      params: {
+        leadId,
+        pageNumber: page,
+        limit,
+        search,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching lead quotations:", error);
     throw error;
   }
 }; 
