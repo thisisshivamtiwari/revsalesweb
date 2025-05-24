@@ -197,6 +197,14 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
     }
   };
 
+  const handleTaskCard = (task: Task) => {
+    if (task.taskStatus?.toLowerCase() === 'completed') {
+      router.push(`/dashboard/leads/${task.leadId}`);
+      return;
+    }
+    handleTaskCardClick(task, { openAuditModal, openModal });
+  };
+
   return (
     <div className="bg-white/40 dark:bg-neutral-800/40 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-neutral-700/30 p-4 md:p-6 relative">
       <div className="flex items-center space-x-3 mb-6">
@@ -255,11 +263,11 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
             {tasks.map((task) => (
               <div
                 key={task.id}
-                onClick={() => handleTaskCardClick(task, { openAuditModal, openModal })}
+                onClick={() => handleTaskCard(task)}
                 className="group relative bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-all duration-300 overflow-hidden cursor-pointer"
                 tabIndex={0}
                 aria-label={`View task: ${task.title}`}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleTaskCardClick(task, { openAuditModal, openModal }); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleTaskCard(task); }}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative p-6">
