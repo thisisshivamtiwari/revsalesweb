@@ -72,22 +72,24 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
             </div>
 
             {/* Sticky Tab Navigation */}
-            <div className="sticky top-0 z-30 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md rounded-xl shadow border border-white/10 dark:border-neutral-700/20 mb-8 flex gap-2 overflow-x-auto p-2">
-              {TABS.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 ${
-                    activeTab === tab.key
-                      ? "bg-blue-600 text-white shadow"
-                      : "bg-white/0 dark:bg-neutral-800/0 text-neutral-700 dark:text-neutral-300 hover:bg-blue-500/10 dark:hover:bg-blue-500/10"
-                  }`}
-                  aria-label={tab.label}
-                  tabIndex={0}
-                >
-                  {tab.label}
-                </button>
-              ))}
+            <div className="sticky top-0 z-30 w-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md rounded-xl shadow border border-white/10 dark:border-neutral-700/20 mb-8 overflow-x-auto whitespace-nowrap scrollbar-thin scrollbar-thumb-blue-200 scrollbar-track-transparent">
+              <div className="flex gap-2 min-w-max px-2">
+                {TABS.map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`px-5 py-2 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-blue-400/50 shadow-sm whitespace-nowrap
+                      ${activeTab === tab.key
+                        ? "bg-blue-600 text-white shadow-lg scale-105"
+                        : "bg-white/0 dark:bg-neutral-800/0 text-neutral-700 dark:text-neutral-300 hover:bg-blue-500/10 dark:hover:bg-blue-500/10"}
+                    `}
+                    aria-label={tab.label}
+                    tabIndex={0}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Tab Content */}
