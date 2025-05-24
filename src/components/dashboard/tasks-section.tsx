@@ -12,6 +12,7 @@ import { AddNoteModal } from '@/components/lead-details/add-note-modal';
 import { useRouter } from 'next/navigation';
 import { ModalPortal } from '@/components/ui/ModalPortal';
 import { getLeads, type Lead } from '@/services/leads';
+import { AddAuditModal } from '@/components/lead-details/add-audit-modal';
 
 export const TasksSection = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -49,6 +50,8 @@ export const TasksSection = () => {
   });
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+  const [showAuditModal, setShowAuditModal] = useState(false);
+  const [auditTask, setAuditTask] = useState<Task | null>(null);
   const router = useRouter();
 
   const fetchTasks = async () => {
@@ -132,6 +135,11 @@ export const TasksSection = () => {
     } else {
       setSelectedTask(task);
     }
+  };
+
+  const openAuditModal = (task: Task) => {
+    setAuditTask(task);
+    setShowAuditModal(true);
   };
 
   const handleMarkComplete = async () => {
@@ -269,11 +277,11 @@ export const TasksSection = () => {
             {tasks.map((task) => (
               <div
                 key={task.id}
-                onClick={() => handleTaskCardClick(task, { openModal })}
+                onClick={() => handleTaskCardClick(task, { openAuditModal, openModal })}
                 className="group relative bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-all duration-300 overflow-hidden cursor-pointer"
                 tabIndex={0}
                 aria-label={`View task: ${task.title}`}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleTaskCardClick(task, { openModal }); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleTaskCardClick(task, { openAuditModal, openModal }); }}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative p-6">
@@ -539,6 +547,25 @@ export const TasksSection = () => {
             </form>
           </div>
         </ModalPortal>
+      )}
+
+      {showAuditModal && auditTask && (
+        <AddAuditModal
+          isOpen={showAuditModal}
+          onClose={() => { setShowAuditModal(false); setAuditTask(null); }}
+          leadId={auditTask.leadId}
+          onAuditAdded={async () => {
+            try {
+              await completeTask(auditTask.id, auditTask.leadId);
+              toast.success('Audit added and task completed successfully');
+              setShowAuditModal(false);
+              setAuditTask(null);
+              fetchTasks();
+            } catch (err) {
+              toast.error('Failed to complete task after audit');
+            }
+          }}
+        />
       )}
     </div>
   );
