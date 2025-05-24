@@ -2,30 +2,27 @@
 
 import { useEffect, useState } from 'react';
 import { getLeadAudit, LeadAudit } from '@/services/leads';
-import { IconFileReport, IconUser, IconCalendar, IconExternalLink } from '@tabler/icons-react';
-import { format } from 'date-fns';
+import { AddAuditModal } from './add-audit-modal';
+import { IconPlus, IconExternalLink } from '@tabler/icons-react';
 
 interface AuditTabProps {
-  leadId: string | number;
+  leadId: number;
 }
 
-const AuditTab = ({ leadId }: AuditTabProps) => {
+export const AuditTab = ({ leadId }: AuditTabProps) => {
   const [audits, setAudits] = useState<LeadAudit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const fetchAudits = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
-      const response = await getLeadAudit(leadId);
-      if (response.status && response.code === 200) {
-        setAudits(response.data.audit);
-      } else {
-        setError(response.message || 'Failed to fetch audit reports');
-      }
+      const res = await getLeadAudit(leadId);
+      setAudits(res.data.audit || []);
     } catch (err) {
-      setError('Failed to fetch audit reports');
+      setError('Failed to load audits');
     } finally {
       setLoading(false);
     }
@@ -33,78 +30,72 @@ const AuditTab = ({ leadId }: AuditTabProps) => {
 
   useEffect(() => {
     fetchAudits();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leadId]);
 
-  const handleOpenReport = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
-
   return (
-    <div className="bg-white/40 dark:bg-neutral-800/40 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-neutral-700/30 p-4 md:p-6">
-      <div className="flex items-center space-x-3 mb-6">
-        <div className="p-2 rounded-xl bg-purple-500/10 dark:bg-purple-500/20">
-          <IconFileReport className="w-6 h-6 text-purple-500" />
-        </div>
-        <h2 className="text-xl md:text-2xl font-bold text-neutral-800 dark:text-neutral-100">
-          Audit Reports
-        </h2>
-      </div>
+    <div className="relative min-h-[300px]">
+      {/* Floating Add Audit Button */}
+      <button
+        className="fixed bottom-8 right-8 z-40 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg p-4 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-blue-400"
+        onClick={() => setIsAddModalOpen(true)}
+        aria-label="Add Audit"
+        tabIndex={0}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setIsAddModalOpen(true); }}
+      >
+        <IconPlus className="w-6 h-6" />
+      </button>
+
+      {/* Add Audit Modal */}
+      <AddAuditModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        leadId={leadId}
+        onAuditAdded={fetchAudits}
+      />
+
+      {/* Content */}
       {loading ? (
         <div className="flex justify-center items-center h-40">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500"></div>
+          <span className="text-blue-600 font-semibold animate-pulse">Loading audits...</span>
         </div>
       ) : error ? (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-500/10 dark:bg-red-500/20 flex items-center justify-center">
-            <IconFileReport className="w-8 h-8 text-red-500" />
-          </div>
-          <h3 className="text-lg font-medium text-neutral-600 dark:text-neutral-400">{error}</h3>
+        <div className="flex justify-center items-center h-40">
+          <span className="text-red-500 font-semibold">{error}</span>
         </div>
       ) : audits.length === 0 ? (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-purple-500/10 dark:bg-purple-500/20 flex items-center justify-center">
-            <IconFileReport className="w-8 h-8 text-purple-500" />
-          </div>
-          <h3 className="text-lg font-medium text-neutral-600 dark:text-neutral-400">No audit reports found</h3>
+        <div className="flex flex-col items-center justify-center h-40 text-neutral-500">
+          <span className="text-lg font-semibold">No audits found</span>
+          <span className="text-sm">Click the + button to add a new audit.</span>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {audits.map((audit, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+          {audits.map((audit, idx) => (
             <div
-              key={index}
-              className="group relative bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 hover:border-purple-500/50 dark:hover:border-purple-500/50 transition-all duration-300 overflow-hidden"
+              key={idx}
+              className="bg-white/60 dark:bg-neutral-800/60 border border-blue-100 dark:border-blue-900 rounded-2xl shadow-lg p-5 flex flex-col gap-2 backdrop-blur-xl transition hover:scale-[1.02] hover:shadow-xl"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-100">
-                    {audit.name}
-                  </h3>
-                  <button
-                    onClick={() => handleOpenReport(audit.url)}
-                    className="p-2 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 dark:hover:bg-purple-500/30 transition-colors duration-200"
-                    aria-label="Open audit report"
-                  >
-                    <IconExternalLink className="w-5 h-5" />
-                  </button>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
-                    <IconUser className="w-4 h-4" />
-                    <span>{audit.createdByName}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
-                    <IconCalendar className="w-4 h-4" />
-                    <span>{format(new Date(audit.createdAt), 'PP, p')}</span>
-                  </div>
-                </div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-semibold text-blue-700 dark:text-blue-300 text-base">{audit.name}</span>
+                <a
+                  href={audit.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none"
+                  aria-label={`Open audit link for ${audit.name}`}
+                  tabIndex={0}
+                >
+                  <IconExternalLink className="w-4 h-4 inline" />
+                </a>
               </div>
+              <div className="text-xs text-neutral-500 mb-1">
+                Added by {audit.createdByName || audit.createdBy} on {new Date(audit.createdAt).toLocaleString()}
+              </div>
+              <div className="text-xs text-neutral-400">Lead ID: {audit.leadId}</div>
             </div>
           ))}
         </div>
       )}
     </div>
   );
-};
-
-export default AuditTab; 
+}; 
