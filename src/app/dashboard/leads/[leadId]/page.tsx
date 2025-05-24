@@ -49,6 +49,7 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
   }, [leadId]);
 
   const handleOpenStatusModal = async () => {
+    console.log('Status badge clicked');
     setStatusModalOpen(true);
     setStatusLoading(true);
     setStatusError(null);
@@ -110,7 +111,7 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
                   </div>
                   <div className="flex gap-2">
                     <span
-                      className="px-3 py-1 rounded-full text-sm font-medium border cursor-pointer transition-all duration-150 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="px-3 py-1 rounded-full text-sm font-medium border cursor-pointer transition-all duration-150 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 ring-2 ring-blue-400"
                       style={{ backgroundColor: `${lead.color}20`, color: lead.color || '#6b7280', borderColor: `${lead.color}40` }}
                       tabIndex={0}
                       role="button"
