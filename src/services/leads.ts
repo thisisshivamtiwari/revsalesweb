@@ -265,6 +265,44 @@ export const getLeadQuotations = async (
     console.error("Error fetching lead quotations:", error);
     throw error;
   }
+};
+
+export interface LeadAudit {
+  name: string;
+  url: string;
+  createdBy: string;
+  createdByName: string;
+  createdAt: string;
+  leadId: number;
+}
+
+export interface GetLeadAuditResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: {
+    audit: LeadAudit[];
+  };
+}
+
+export const getLeadAudit = async (leadId: string | number): Promise<GetLeadAuditResponse> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.get<GetLeadAuditResponse>(
+      `${BASE_URL}/sales/lead/audit/getAudit`,
+      {
+        params: { leadId },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching lead audit:', error);
+    throw error;
+  }
 }; 
 
 
