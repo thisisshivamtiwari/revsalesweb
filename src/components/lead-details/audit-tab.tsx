@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getLeadAudit, LeadAudit } from '@/services/leads';
 import { AddAuditModal } from './add-audit-modal';
-import { IconPlus, IconExternalLink } from '@tabler/icons-react';
+import { IconPlus, IconExternalLink, IconFileReport } from '@tabler/icons-react';
 
 interface AuditTabProps {
   leadId: number;
@@ -35,6 +35,16 @@ export const AuditTab = ({ leadId }: AuditTabProps) => {
 
   return (
     <div className="relative min-h-[300px]">
+      {/* Section Heading and Icon */}
+      <div className="flex items-center space-x-3 mb-6">
+        <div className="p-2 rounded-xl bg-blue-500/10 dark:bg-blue-500/20">
+          <IconFileReport className="w-6 h-6 text-blue-500" />
+        </div>
+        <h2 className="text-xl md:text-2xl font-bold text-neutral-800 dark:text-neutral-100">
+          Audit Reports
+        </h2>
+      </div>
+
       {/* Floating Add Audit Button */}
       <button
         className="fixed bottom-8 right-8 z-40 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg p-4 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-blue-400"
