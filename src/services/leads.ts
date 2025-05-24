@@ -133,4 +133,85 @@ export const getLeadDetails = async (leadId: string | number): Promise<GetLeadDe
     console.error('Error fetching lead details:', error);
     throw error;
   }
+};
+
+export interface LeadActivityItem {
+  createdAt: string;
+  owner: string;
+  ownerName: string;
+  activity: string;
+}
+
+export interface LeadActivity {
+  id: string | number;
+  activities: LeadActivityItem[];
+}
+
+export interface GetLeadActivityResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: {
+    activity: LeadActivity;
+  };
+}
+
+export const getLeadActivity = async (leadId: string | number): Promise<GetLeadActivityResponse> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.get<GetLeadActivityResponse>(
+      `${BASE_URL}/sales/lead/getLeadActivity`,
+      {
+        params: { leadId },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching lead activity:', error);
+    throw error;
+  }
+};
+
+export interface LeadNote {
+  id: string;
+  title: string;
+  description: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface GetLeadNotesResponse {
+  status: boolean;
+  code: number;
+  message: string;
+  data: {
+    total: number;
+    limit: number;
+    offset: number;
+    notes: LeadNote[];
+  };
+}
+
+export const getLeadNotes = async (leadId: string | number, pageNumber = 1, limit = 10): Promise<GetLeadNotesResponse> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.get<GetLeadNotesResponse>(
+      `${BASE_URL}/sales/lead/notes/getNotes`,
+      {
+        params: { leadId, pageNumber, limit },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching lead notes:', error);
+    throw error;
+  }
 }; 
