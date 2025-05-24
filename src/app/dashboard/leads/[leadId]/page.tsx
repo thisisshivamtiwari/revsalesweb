@@ -152,10 +152,10 @@ export default function LeadDetailsPage({ params }: { params: Promise<{ leadId: 
               {activeTab === "about" && <AboutTab leadId={leadId} />}
               {activeTab === "activity" && <ActivityHistoryTab leadId={leadId} />}
               {activeTab === "tasks" && <TasksTab leadId={leadId} />}
-              {activeTab === "notes" && <NotesTab leadId={leadId} />}
-              {activeTab === "proposals" && <ProposalsTab leadId={leadId} />}
-              {activeTab === "audit" && <AuditTab leadId={leadId} />}
-              {activeTab === "script" && <ScriptQuestionsTab leadId={leadId} />}
+              {activeTab === "notes" && <NotesTab leadId={Number(leadId)} />}
+              {activeTab === "proposals" && <ProposalsTab leadId={Number(leadId)} />}
+              {activeTab === "audit" && <AuditTab leadId={Number(leadId)} />}
+              {activeTab === "script" && <ScriptQuestionsTab leadId={Number(leadId)} />}
               {activeTab === "chat" && <ChatTab leadId={leadId} />}
               {activeTab === "calling" && (
                 loading || !lead ? (
