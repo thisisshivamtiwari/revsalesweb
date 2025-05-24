@@ -1,11 +1,12 @@
 "use client";
 
+import React from "react";
 import { useEffect, useState } from "react";
 import { getLeadCallSummary, LeadCallSummaryItem } from "@/services/leads";
 import {
   IconPhoneIncoming,
   IconPhoneOutgoing,
-  IconPhoneMissed,
+  IconPhoneEnd,
   IconPhone,
   IconAlertTriangle,
   IconClock,
@@ -16,7 +17,7 @@ interface CallingSummaryTabProps {
   phoneNumber: string;
 }
 
-const callTypeMeta: Record<string, { label: string; icon: JSX.Element; color: string }> = {
+const callTypeMeta: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
   incoming: {
     label: "Incoming",
     icon: <IconPhoneIncoming className="w-6 h-6" />,
@@ -29,7 +30,7 @@ const callTypeMeta: Record<string, { label: string; icon: JSX.Element; color: st
   },
   missed: {
     label: "Missed",
-    icon: <IconPhoneMissed className="w-6 h-6" />,
+    icon: <IconPhoneEnd className="w-6 h-6" />,
     color: "bg-red-100 text-red-700",
   },
   "not connected": {
