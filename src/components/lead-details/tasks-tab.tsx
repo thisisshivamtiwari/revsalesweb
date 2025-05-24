@@ -5,10 +5,39 @@ import { IconChecklist, IconUser, IconPhone, IconCalendar, IconClock, IconChevro
 import { toast } from 'sonner';
 import { TaskActionModal } from '@/components/ui/task-action-modal';
 import { ModalPortal } from '@/components/ui/ModalPortal';
+import React from 'react';
 
 interface TasksTabProps {
   leadId: string | number;
 }
+
+// New: Modal for call/follow up task types
+const CallFollowUpTaskModal = ({ isOpen, onClose, task }: { isOpen: boolean; onClose: () => void; task: Task | null }) => {
+  if (!isOpen || !task) return null;
+  return (
+    <ModalPortal>
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="bg-white/95 dark:bg-neutral-900/95 border border-blue-200 dark:border-blue-800 rounded-2xl shadow-2xl p-6 w-full max-w-md relative">
+          <button
+            className="absolute top-3 right-3 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 text-xl font-bold focus:outline-none hover:bg-blue-100/60 dark:hover:bg-blue-900/40 rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+            onClick={onClose}
+            type="button"
+            aria-label="Close call/follow up task modal"
+          >
+            ×
+          </button>
+          <h2 className="text-lg font-bold mb-4 text-neutral-800 dark:text-neutral-100">Task Options</h2>
+          <div className="space-y-3">
+            <button className="w-full py-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-200 font-semibold hover:bg-blue-200 dark:hover:bg-blue-800 transition" onClick={() => toast.info('View Lead (not implemented)')}>View Lead</button>
+            <button className="w-full py-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-200 font-semibold hover:bg-blue-200 dark:hover:bg-blue-800 transition" onClick={() => toast.info('Create Followup Task (not implemented)')}>Create Followup Task</button>
+            <button className="w-full py-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-200 font-semibold hover:bg-blue-200 dark:hover:bg-blue-800 transition" onClick={() => toast.info('Add Notes (not implemented)')}>Add Notes</button>
+            <button className="w-full py-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 transition" onClick={() => toast.info('Mark Task as Complete (not implemented)')}>Mark Task as Complete</button>
+          </div>
+        </div>
+      </div>
+    </ModalPortal>
+  );
+};
 
 export const TasksTab = ({ leadId }: TasksTabProps) => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -32,6 +61,8 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
     createdFor: '',
   });
   const [members, setMembers] = useState<Member[]>([]);
+  const [showCallFollowUpModal, setShowCallFollowUpModal] = useState(false);
+  const [callFollowUpTask, setCallFollowUpTask] = useState<Task | null>(null);
 
   const fetchTasks = async (page = currentPage) => {
     try {
@@ -133,6 +164,18 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
     }
   };
 
+  // Updated card click handler
+  const handleTaskCardClick = (task: Task) => {
+    const type = task.taskType?.toLowerCase();
+    if (type === 'call' || type === 'follow up' || type === 'followup') {
+      setCallFollowUpTask(task);
+      setShowCallFollowUpModal(true);
+      // setSelectedTask(task); // Commented out old code
+    } else {
+      toast.info('Under development');
+    }
+  };
+
   return (
     <div className="bg-white/40 dark:bg-neutral-800/40 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-neutral-700/30 p-4 md:p-6 relative">
       <div className="flex items-center space-x-3 mb-6">
@@ -191,11 +234,11 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
             {tasks.map((task) => (
               <div
                 key={task.id}
-                onClick={() => setSelectedTask(task)}
+                onClick={() => handleTaskCardClick(task)}
                 className="group relative bg-white/50 dark:bg-neutral-800/50 backdrop-blur-sm rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-all duration-300 overflow-hidden cursor-pointer"
                 tabIndex={0}
                 aria-label={`View task: ${task.title}`}
-                onKeyDown={(e) => { if (e.key === 'Enter') setSelectedTask(task); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleTaskCardClick(task); }}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative p-6">
@@ -240,14 +283,12 @@ export const TasksTab = ({ leadId }: TasksTabProps) => {
           </div>
         </>
       )}
-      {selectedTask && (
-        <TaskActionModal
-          isOpen={!!selectedTask}
-          onClose={() => setSelectedTask(null)}
-          task={selectedTask}
-          onTaskCompleted={() => fetchTasks(currentPage)}
-        />
-      )}
+      {/* New: Call/Follow Up Task Modal */}
+      <CallFollowUpTaskModal
+        isOpen={showCallFollowUpModal}
+        onClose={() => setShowCallFollowUpModal(false)}
+        task={callFollowUpTask}
+      />
       {/* Floating Create Task Button */}
       <button
         className="fixed bottom-8 right-8 z-50 p-4 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
