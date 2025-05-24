@@ -352,6 +352,54 @@ export const getLeadScriptQuestions = async (leadId: string | number): Promise<G
     console.error('Error fetching script questions:', error);
     throw error;
   }
+};
+
+// Add/Update Script Answers (full wizard)
+export interface ScriptAnswerQuestion {
+  id: string;
+  question: string;
+  answer: string;
+}
+export interface ScriptAnswerStep {
+  id: string;
+  name: string;
+  stepNumber: number;
+  questions: ScriptAnswerQuestion[];
+}
+export interface ScriptAnswerWizard {
+  id: string;
+  name: string;
+  steps: ScriptAnswerStep[];
+}
+export interface AddOrUpdateScriptAnswersPayload {
+  leadId: string | number;
+  wizard: ScriptAnswerWizard;
+}
+export interface AddOrUpdateScriptAnswersResponse {
+  status: boolean;
+  code: number;
+  message: string;
+}
+export const addOrUpdateScriptAnswers = async (
+  payload: AddOrUpdateScriptAnswersPayload
+): Promise<AddOrUpdateScriptAnswersResponse> => {
+  try {
+    const token = getAuthToken();
+    const response = await axios.post<AddOrUpdateScriptAnswersResponse>(
+      `${BASE_URL}/sales/lead/wizard/addScriptAnswer`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error adding/updating script answers:', error);
+    throw error;
+  }
 }; 
 
 
