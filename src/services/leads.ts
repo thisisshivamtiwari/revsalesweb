@@ -555,6 +555,38 @@ export const addLeadNotes = async (payload: AddNotePayload): Promise<AddNoteResp
   }
 };
 
+export interface AddAuditPayload {
+  audits: { leadId: number; name: string; url: string }[];
+}
+
+export interface AddAuditResponse {
+  status: boolean;
+  code: number;
+  message: string;
+}
+
+export const addLeadAudit = async (
+  payload: AddAuditPayload
+): Promise<AddAuditResponse> => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(
+      `${BASE_URL}/sales/lead/audit/addAudit`,
+      payload,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token ? `${token}` : '',
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error adding audit:', error);
+    throw error;
+  }
+};
+
 
 
 
